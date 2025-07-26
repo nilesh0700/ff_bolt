@@ -1,0 +1,139 @@
+{
+  "account": {
+    "id": "zerodha_demo_001",
+    "clientId": "DM1234",
+    "name": "Demo User",
+    "accountType": "individual"
+  },
+  "portfolio": {
+    "totalValue": 450000,
+    "totalInvestment": 380000,
+    "totalReturns": 70000,
+    "returnsPercent": 18.42,
+    "dayChange": 2850,
+    "dayChangePercent": 0.64
+  },
+  "holdings": [
+    {
+      "symbol": "RELIANCE",
+      "companyName": "Reliance Industries Ltd",
+      "quantity": 50,
+      "avgPrice": 2450,
+      "currentPrice": 2680,
+      "ltp": 2680,
+      "value": 134000,
+      "pnl": 11500,
+      "pnlPercent": 9.39,
+      "dayChange": 25,
+      "dayChangePercent": 0.94
+    },
+    {
+      "symbol": "TCS",
+      "companyName": "Tata Consultancy Services Ltd",
+      "quantity": 30,
+      "avgPrice": 3200,
+      "currentPrice": 3580,
+      "ltp": 3580,
+      "value": 107400,
+      "pnl": 11400,
+      "pnlPercent": 11.88,
+      "dayChange": 45,
+      "dayChangePercent": 1.27
+    },
+    {
+      "symbol": "INFY",
+      "companyName": "Infosys Ltd",
+      "quantity": 40,
+      "avgPrice": 1450,
+      "currentPrice": 1620,
+      "ltp": 1620,
+      "value": 64800,
+      "pnl": 6800,
+      "pnlPercent": 11.72,
+      "dayChange": 15,
+      "dayChangePercent": 0.94
+    },
+    {
+      "symbol": "HDFCBANK",
+      "companyName": "HDFC Bank Ltd",
+      "quantity": 25,
+      "avgPrice": 2800,
+      "currentPrice": 3100,
+      "ltp": 3100,
+      "value": 77500,
+      "pnl": 7500,
+      "pnlPercent": 10.71,
+      "dayChange": 35,
+      "dayChangePercent": 1.14
+    },
+    {
+      "symbol": "ICICIBANK",
+      "companyName": "ICICI Bank Ltd",
+      "quantity": 35,
+      "avgPrice": 850,
+      "currentPrice": 920,
+      "ltp": 920,
+      "value": 32200,
+      "pnl": 2450,
+      "pnlPercent": 8.24,
+      "dayChange": 12,
+      "dayChangePercent": 1.32
+    }
+  ],
+  "mutualFunds": [
+    {
+      "scheme": "Axis Bluechip Fund",
+      "folioNumber": "12345678",
+      "units": 1250.45,
+      "nav": 45.67,
+      "value": 57089,
+      "investment": 50000,
+      "returns": 7089,
+      "returnsPercent": 14.18
+    },
+    {
+      "scheme": "Mirae Asset Large Cap Fund",
+      "folioNumber": "87654321",
+      "units": 890.23,
+      "nav": 78.45,
+      "value": 69845,
+      "investment": 60000,
+      "returns": 9845,
+      "returnsPercent": 16.41
+    }
+  ],
+  "orders": [
+    {
+      "orderId": "240201000001",
+      "timestamp": "2024-02-01 09:15:00",
+      "symbol": "RELIANCE",
+      "side": "BUY",
+      "quantity": 10,
+      "price": 2650,
+      "status": "COMPLETE",
+      "orderType": "MARKET"
+    },
+    {
+      "orderId": "240131000002",
+      "timestamp": "2024-01-31 14:30:00",
+      "symbol": "TCS",
+      "side": "BUY",
+      "quantity": 5,
+      "price": 3550,
+      "status": "COMPLETE",
+      "orderType": "LIMIT"
+    }
+  ],
+  "insights": {
+    "bestPerformer": "TCS",
+    "worstPerformer": "ICICIBANK",
+    "sectorAllocation": {
+      "IT": 38.2,
+      "Banking": 24.4,
+      "Energy": 29.8,
+      "Others": 7.6
+    },
+    "riskScore": 6.5,
+    "diversificationScore": 7.2
+  }
+}
