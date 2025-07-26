@@ -23,7 +23,6 @@ export default function AccountConnection({
 
   const handleConnect = async (account: string) => {
     setConnecting(account);
-    // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1500));
     onAccountConnect(account);
     setConnecting(null);
@@ -35,8 +34,8 @@ export default function AccountConnection({
       name: 'Fi Money',
       description: 'Digital banking & smart savings',
       icon: Banknote,
-      color: 'from-emerald-500 to-teal-600',
-      bgColor: 'bg-gradient-to-br from-emerald-50 to-teal-50',
+      color: 'from-[#00A175] to-[#008a64]',
+      bgColor: 'from-[#00A175]/10 to-[#008a64]/10',
       connected: connectedAccounts.includes('fi-money')
     },
     {
@@ -44,8 +43,8 @@ export default function AccountConnection({
       name: 'Zerodha',
       description: 'Investment & trading platform',
       icon: TrendingUp,
-      color: 'from-blue-500 to-indigo-600',
-      bgColor: 'bg-gradient-to-br from-blue-50 to-indigo-50',
+      color: 'from-[#725BF4] to-[#5d47d9]',
+      bgColor: 'from-[#725BF4]/10 to-[#5d47d9]/10',
       connected: connectedAccounts.includes('zerodha')
     }
   ];
@@ -53,140 +52,153 @@ export default function AccountConnection({
   const progress = (connectedAccounts.length / accounts.length) * 100;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 p-4">
-      <div className="max-w-4xl mx-auto">
-        {/* Header Section */}
-        <div className="text-center mb-12 pt-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl mb-6 animate-pulse-glow">
-            <Sparkles className="w-10 h-10 text-white" />
+    <div className="min-h-screen bg-white">
+      {/* Header */}
+      <header className="border-b border-gray-100">
+        <div className="container mx-auto px-6 py-6">
+          <div className="flex items-center justify-center">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-[#725BF4] rounded-xl flex items-center justify-center">
+                <Sparkles className="w-6 h-6 text-white" />
+              </div>
+              <span className="text-2xl font-bold text-gray-900">Future Self</span>
+            </div>
           </div>
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">
-            Financial Future Self
-          </h1>
-          <p className="text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
-            Connect your financial accounts to unlock personalized insights and build your future self
-          </p>
         </div>
+      </header>
 
-        {/* Main Card */}
-        <Card className="glass-effect border-0 shadow-2xl rounded-3xl overflow-hidden backdrop-blur-xl">
-          <CardHeader className="text-center pb-8 bg-gradient-to-r from-indigo-500/10 to-purple-500/10">
-            <CardTitle className="text-3xl font-bold text-slate-800 mb-2">
-              Connect Your Accounts
-            </CardTitle>
-            <CardDescription className="text-lg text-slate-600">
-              Securely link your financial accounts to personalize your journey
-            </CardDescription>
-          </CardHeader>
-
-          <CardContent className="p-8 space-y-8">
-            {/* Account Cards Grid */}
-            <div className="grid gap-6 md:grid-cols-2">
-              {accounts.map((account) => {
-                const IconComponent = account.icon;
-                const isConnecting = connecting === account.id;
-                
-                return (
-                  <Card
-                    key={account.id}
-                    className={`relative overflow-hidden transition-all duration-500 hover:shadow-2xl border-2 card-hover ${
-                      account.connected
-                        ? 'border-emerald-200 bg-gradient-to-br from-emerald-50 to-green-50 shadow-emerald-100'
-                        : 'border-slate-200 bg-white hover:border-indigo-300 hover:shadow-indigo-100'
-                    } rounded-2xl`}
-                  >
-                    {/* Decorative elements */}
-                    <div className="absolute top-0 right-0 w-32 h-32 opacity-10">
-                      <div className={`w-full h-full bg-gradient-to-br ${account.color} rounded-full transform translate-x-16 -translate-y-16`}></div>
-                    </div>
-                    
-                    <CardContent className="p-8 text-center relative z-10">
-                      <div className={`w-20 h-20 mx-auto mb-6 rounded-3xl bg-gradient-to-br ${account.color} flex items-center justify-center shadow-lg transform transition-transform hover:scale-110`}>
-                        <IconComponent className="w-10 h-10 text-white" />
-                      </div>
-                      <h3 className="font-bold text-xl text-slate-800 mb-3">
-                        {account.name}
-                      </h3>
-                      <p className="text-slate-600 mb-6 leading-relaxed">
-                        {account.description}
-                      </p>
-                      
-                      {account.connected ? (
-                        <div className="flex items-center justify-center space-x-3 text-emerald-600 bg-emerald-100 py-3 px-6 rounded-2xl">
-                          <CheckCircle className="w-6 h-6" />
-                          <span className="font-semibold text-lg">Connected</span>
-                          <Star className="w-5 h-5 fill-current" />
-                        </div>
-                      ) : (
-                        <Button
-                          onClick={() => handleConnect(account.id)}
-                          disabled={isConnecting}
-                          className={`w-full h-12 bg-gradient-to-r ${account.color} hover:shadow-lg text-white border-0 rounded-2xl font-semibold text-base transition-all duration-300 hover:scale-105`}
-                        >
-                          {isConnecting ? (
-                            <div className="flex items-center space-x-3">
-                              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                              <span>Connecting...</span>
-                            </div>
-                          ) : (
-                            <div className="flex items-center space-x-2">
-                              <span>Connect {account.name}</span>
-                              <ArrowRight className="w-5 h-5" />
-                            </div>
-                          )}
-                        </Button>
-                      )}
-                    </CardContent>
-                  </Card>
-                );
-              })}
+      <div className="container mx-auto px-6 py-20">
+        <div className="max-w-4xl mx-auto">
+          {/* Header Section */}
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center bg-gray-50 rounded-full px-6 py-3 mb-8 border border-gray-200">
+              <Star className="w-5 h-5 text-[#00A175] mr-2" />
+              <span className="text-sm font-medium text-gray-700">Secure & Encrypted</span>
             </div>
+            
+            <h1 className="text-6xl md:text-7xl font-bold mb-8 leading-tight text-gray-900">
+              Connect Your
+              <span className="block text-[#725BF4] mt-2">
+                Accounts
+              </span>
+            </h1>
+            
+            <p className="text-xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
+              Securely link your financial accounts to unlock personalized insights and build your future self
+            </p>
+          </div>
 
-            {/* Progress Section */}
-            <div className="space-y-6 bg-gradient-to-r from-slate-50 to-indigo-50 p-6 rounded-2xl">
-              <div className="flex items-center justify-between text-base">
-                <span className="text-slate-700 font-medium">
-                  {connectedAccounts.length} of {accounts.length} accounts connected
-                </span>
-                {connectedAccounts.length > 0 && (
-                  <div className="flex items-center space-x-2 text-emerald-600 bg-emerald-100 px-4 py-2 rounded-full">
-                    <CheckCircle className="w-5 h-5" />
-                    <span className="font-semibold">Ready to continue</span>
-                  </div>
-                )}
-              </div>
+          {/* Account Cards Grid */}
+          <div className="grid gap-8 md:grid-cols-2 mb-12">
+            {accounts.map((account) => {
+              const IconComponent = account.icon;
+              const isConnecting = connecting === account.id;
               
-              <div className="relative">
-                <Progress value={progress} className="h-3 bg-slate-200 rounded-full overflow-hidden" />
-                <div 
-                  className="absolute top-0 left-0 h-3 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full transition-all duration-700 ease-out"
-                  style={{ width: `${progress}%` }}
-                ></div>
-              </div>
-            </div>
+              return (
+                <Card
+                  key={account.id}
+                  className={`card-modern transition-all duration-300 hover:scale-105 ${
+                    account.connected
+                      ? 'border-[#00A175] bg-gradient-to-br from-[#00A175]/5 to-[#008a64]/5'
+                      : 'hover:shadow-xl'
+                  }`}
+                >
+                  <CardContent className="p-8 text-center">
+                    <div className={`w-20 h-20 mx-auto mb-6 rounded-3xl bg-gradient-to-br ${account.color} flex items-center justify-center shadow-lg`}>
+                      <IconComponent className="w-10 h-10 text-white" />
+                    </div>
+                    <h3 className="text-2xl font-bold mb-4 text-gray-900">
+                      {account.name}
+                    </h3>
+                    <p className="text-gray-600 mb-8 leading-relaxed">
+                      {account.description}
+                    </p>
+                    
+                    {account.connected ? (
+                      <div className="flex items-center justify-center space-x-3 text-[#00A175] bg-[#00A175]/10 py-4 px-6 rounded-2xl border border-[#00A175]/20">
+                        <CheckCircle className="w-6 h-6" />
+                        <span className="font-semibold text-lg">Connected</span>
+                        <Star className="w-5 h-5 fill-current" />
+                      </div>
+                    ) : (
+                      <Button
+                        onClick={() => handleConnect(account.id)}
+                        disabled={isConnecting}
+                        className={`w-full h-14 bg-gradient-to-r ${account.color} hover:shadow-lg text-white border-0 rounded-2xl font-semibold text-lg transition-all duration-300 hover:scale-105`}
+                      >
+                        {isConnecting ? (
+                          <div className="flex items-center space-x-3">
+                            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                            <span>Connecting...</span>
+                          </div>
+                        ) : (
+                          <div className="flex items-center space-x-2">
+                            <span>Connect {account.name}</span>
+                            <ArrowRight className="w-5 h-5" />
+                          </div>
+                        )}
+                      </Button>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
 
-            {/* Security Notice */}
-            <div className="flex items-start space-x-4 text-slate-600 bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-2xl border border-blue-100">
-              <Shield className="w-6 h-6 text-blue-500 mt-1 flex-shrink-0" />
-              <div>
-                <h4 className="font-semibold text-slate-800 mb-1">Bank-level Security</h4>
-                <p className="leading-relaxed">
-                  Your data is encrypted and protected with industry-leading security. We never store your login credentials and only access the information needed to personalize your financial journey.
-                </p>
+          {/* Progress Section */}
+          <Card className="card-modern mb-8">
+            <CardContent className="p-8">
+              <div className="space-y-6">
+                <div className="flex items-center justify-between text-lg">
+                  <span className="text-gray-700 font-medium">
+                    {connectedAccounts.length} of {accounts.length} accounts connected
+                  </span>
+                  {connectedAccounts.length > 0 && (
+                    <div className="flex items-center space-x-2 text-[#00A175] bg-[#00A175]/10 px-4 py-2 rounded-full border border-[#00A175]/20">
+                      <CheckCircle className="w-5 h-5" />
+                      <span className="font-semibold">Ready to continue</span>
+                    </div>
+                  )}
+                </div>
+                
+                <div className="relative">
+                  <Progress value={progress} className="h-4 bg-gray-200 rounded-full" />
+                  <div 
+                    className="absolute top-0 left-0 h-4 bg-gradient-to-r from-[#725BF4] to-[#5d47d9] rounded-full transition-all duration-700 ease-out"
+                    style={{ width: `${progress}%` }}
+                  ></div>
+                </div>
               </div>
-            </div>
+            </CardContent>
+          </Card>
 
-            {/* Continue Button */}
+          {/* Security Notice */}
+          <Card className="card-modern mb-8">
+            <CardContent className="p-8">
+              <div className="flex items-start space-x-4 text-gray-600">
+                <Shield className="w-8 h-8 text-[#00A175] mt-1 flex-shrink-0" />
+                <div>
+                  <h4 className="text-xl font-bold text-gray-900 mb-3">Bank-level Security</h4>
+                  <p className="text-lg leading-relaxed">
+                    Your data is encrypted and protected with industry-leading security. We never store your login credentials and only access the information needed to personalize your financial journey.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Continue Button */}
+          <div className="text-center">
             <Button
               onClick={onContinue}
               disabled={connectedAccounts.length === 0}
-              className="w-full h-16 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-700 hover:via-purple-700 hover:to-pink-700 text-white border-0 rounded-2xl font-bold text-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+              className="bg-[#00A175] hover:bg-[#008a64] text-white font-semibold text-lg px-12 py-4 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <span>Continue to Avatar Setup</span>
               <ArrowRight className="w-6 h-6 ml-3" />
             </Button>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     </div>
   );

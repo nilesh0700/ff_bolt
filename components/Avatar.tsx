@@ -40,13 +40,12 @@ export default function Avatar({ age, income, riskTolerance, size = 'medium' }: 
   const hasGlasses = age > 50 || (income > 800000 && riskTolerance === 'low');
   const skinTone = '#FDBCB4';
   const hairColor = isOlder ? '#D1D5DB' : '#4B5563';
-  const shirtColor = riskTolerance === 'high' ? '#EF4444' : riskTolerance === 'medium' ? '#3B82F6' : '#10B981';
+  const shirtColor = riskTolerance === 'high' ? '#725BF4' : riskTolerance === 'medium' ? '#00A175' : '#374151';
   const wealthLevel = income > 1000000 ? 'high' : income > 500000 ? 'medium' : 'low';
 
   return (
-    <div className={`${sizeClasses[size]} mx-auto relative avatar-glow rounded-full ${isAnimating ? 'animate-pulse' : ''}`}>
+    <div className={`${sizeClasses[size]} mx-auto relative rounded-full shadow-2xl ${isAnimating ? 'animate-pulse' : ''}`}>
       <svg viewBox="0 0 200 200" className="w-full h-full drop-shadow-2xl">
-        {/* Background circle with gradient */}
         <defs>
           <radialGradient id="bgGradient" cx="50%" cy="30%" r="70%">
             <stop offset="0%" stopColor="rgba(255,255,255,0.9)" />
@@ -65,12 +64,10 @@ export default function Avatar({ age, income, riskTolerance, size = 'medium' }: 
           </filter>
         </defs>
         
-        {/* Background circle */}
         <circle cx="100" cy="100" r="95" fill="url(#bgGradient)" stroke="rgba(255,255,255,0.3)" strokeWidth="2" />
         
-        {/* Wealth indicator ring */}
         {wealthLevel === 'high' && (
-          <circle cx="100" cy="100" r="90" fill="none" stroke="#FFD700" strokeWidth="3" strokeDasharray="10,5" opacity="0.7">
+          <circle cx="100" cy="100" r="90" fill="none" stroke="#725BF4" strokeWidth="3" strokeDasharray="10,5" opacity="0.7">
             <animateTransform
               attributeName="transform"
               type="rotate"
@@ -81,11 +78,9 @@ export default function Avatar({ age, income, riskTolerance, size = 'medium' }: 
           </circle>
         )}
         
-        {/* Head with subtle shadow */}
         <ellipse cx="100" cy="85" rx="45" ry="50" fill={skinTone} filter="url(#glow)" />
         <ellipse cx="100" cy="87" rx="43" ry="48" fill="rgba(0,0,0,0.05)" />
         
-        {/* Hair with gradient */}
         <defs>
           <linearGradient id="hairGradient" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor={hairColor} />
@@ -97,15 +92,13 @@ export default function Avatar({ age, income, riskTolerance, size = 'medium' }: 
           fill="url(#hairGradient)"
         />
         
-        {/* Eyes with enhanced details */}
         <ellipse cx="85" cy="80" rx="7" ry={isBlinking ? "1" : "7"} fill="#FFF" />
         <ellipse cx="115" cy="80" rx="7" ry={isBlinking ? "1" : "7"} fill="#FFF" />
-        <ellipse cx="85" cy="80" rx="5" ry={isBlinking ? "1" : "5"} fill="#4A90E2" />
-        <ellipse cx="115" cy="80" rx="5" ry={isBlinking ? "1" : "5"} fill="#4A90E2" />
+        <ellipse cx="85" cy="80" rx="5" ry={isBlinking ? "1" : "5"} fill="#725BF4" />
+        <ellipse cx="115" cy="80" rx="5" ry={isBlinking ? "1" : "5"} fill="#725BF4" />
         <ellipse cx="85" cy="80" rx="2" ry={isBlinking ? "1" : "2"} fill="#000" />
         <ellipse cx="115" cy="80" rx="2" ry={isBlinking ? "1" : "2"} fill="#000" />
         
-        {/* Eye highlights */}
         {!isBlinking && (
           <>
             <circle cx="87" cy="78" r="2" fill="#FFF" opacity="0.8" />
@@ -113,11 +106,9 @@ export default function Avatar({ age, income, riskTolerance, size = 'medium' }: 
           </>
         )}
         
-        {/* Eyebrows */}
         <path d="M 78 72 Q 85 70 92 72" stroke="#8B7355" strokeWidth="2" fill="none" />
         <path d="M 108 72 Q 115 70 122 72" stroke="#8B7355" strokeWidth="2" fill="none" />
         
-        {/* Glasses with modern design */}
         {hasGlasses && (
           <g stroke="#2C3E50" strokeWidth="2" fill="rgba(255,255,255,0.1)">
             <circle cx="85" cy="80" r="14" />
@@ -125,26 +116,22 @@ export default function Avatar({ age, income, riskTolerance, size = 'medium' }: 
             <line x1="99" y1="80" x2="101" y2="80" strokeWidth="3" />
             <line x1="71" y1="75" x2="65" y2="72" strokeWidth="2" />
             <line x1="129" y1="75" x2="135" y2="72" strokeWidth="2" />
-            {/* Lens reflection */}
             <circle cx="82" cy="77" r="3" fill="rgba(255,255,255,0.6)" />
             <circle cx="112" cy="77" r="3" fill="rgba(255,255,255,0.6)" />
           </g>
         )}
         
-        {/* Nose with shadow */}
         <ellipse cx="100" cy="90" rx="3" ry="4" fill="rgba(0,0,0,0.1)" />
         <ellipse cx="99" cy="89" rx="2" ry="3" fill="rgba(255,255,255,0.3)" />
         
-        {/* Mouth with expression based on risk tolerance */}
         {riskTolerance === 'high' ? (
-          <path d="M 88 100 Q 100 108 112 100" stroke="#E74C3C" strokeWidth="2" fill="none" />
+          <path d="M 88 100 Q 100 108 112 100" stroke="#725BF4" strokeWidth="2" fill="none" />
         ) : riskTolerance === 'medium' ? (
-          <path d="M 90 100 Q 100 105 110 100" stroke="#3498DB" strokeWidth="2" fill="none" />
+          <path d="M 90 100 Q 100 105 110 100" stroke="#00A175" strokeWidth="2" fill="none" />
         ) : (
-          <path d="M 92 102 Q 100 100 108 102" stroke="#27AE60" strokeWidth="2" fill="none" />
+          <path d="M 92 102 Q 100 100 108 102" stroke="#374151" strokeWidth="2" fill="none" />
         )}
         
-        {/* Age lines and wrinkles */}
         {isOlder && (
           <g stroke="rgba(0,0,0,0.15)" strokeWidth="1" fill="none">
             <path d="M 75 75 Q 80 77 85 75" />
@@ -156,41 +143,32 @@ export default function Avatar({ age, income, riskTolerance, size = 'medium' }: 
           </g>
         )}
         
-        {/* Neck */}
         <rect x="88" y="130" width="24" height="18" fill={skinTone} rx="2" />
         
-        {/* Shirt/Body with gradient */}
         <ellipse cx="100" cy="175" rx="55" ry="35" fill="url(#shirtGradient)" />
         
-        {/* Shirt collar with details */}
         <path
           d="M 85 145 L 100 158 L 115 145 L 115 170 L 85 170 Z"
           fill="url(#shirtGradient)"
         />
         
-        {/* Collar details */}
         <path d="M 85 145 L 100 158 L 115 145" stroke="rgba(255,255,255,0.3)" strokeWidth="1" fill="none" />
         
-        {/* Wealth accessories */}
         {wealthLevel === 'high' && (
           <>
-            {/* Watch */}
-            <rect x="75" y="140" width="8" height="12" fill="#FFD700" rx="2" />
+            <rect x="75" y="140" width="8" height="12" fill="#725BF4" rx="2" />
             <rect x="76" y="141" width="6" height="10" fill="#000" rx="1" />
-            {/* Tie */}
-            <path d="M 100 158 L 95 180 L 100 190 L 105 180 Z" fill="#8B0000" />
+            <path d="M 100 158 L 95 180 L 100 190 L 105 180 Z" fill="#00A175" />
           </>
         )}
         
-        {/* Confidence glow based on risk tolerance */}
         {riskTolerance === 'high' && (
-          <circle cx="100" cy="100" r="98" fill="none" stroke="#E74C3C" strokeWidth="1" opacity="0.3">
+          <circle cx="100" cy="100" r="98" fill="none" stroke="#725BF4" strokeWidth="1" opacity="0.3">
             <animate attributeName="r" values="98;102;98" dur="2s" repeatCount="indefinite" />
             <animate attributeName="opacity" values="0.3;0.1;0.3" dur="2s" repeatCount="indefinite" />
           </circle>
         )}
         
-        {/* Subtle animation */}
         <animateTransform
           attributeName="transform"
           type="scale"

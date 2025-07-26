@@ -63,7 +63,6 @@ export default function ChatInterface({ user, userProfile, connectedAccounts, on
     setIsAnalyzing(true);
 
     try {
-      // Simulate analyzing data
       await new Promise(resolve => setTimeout(resolve, 2000));
       setIsAnalyzing(false);
 
@@ -136,14 +135,14 @@ export default function ChatInterface({ user, userProfile, connectedAccounts, on
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="bg-white border-b border-gray-100 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 py-4">
+      <header className="border-b border-gray-100 sticky top-0 z-50 bg-white">
+        <div className="container mx-auto px-6 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <Button 
                 onClick={() => onNavigate('landing')}
                 variant="ghost"
-                className="lg:hidden"
+                className="lg:hidden rounded-xl"
               >
                 <Menu className="w-5 h-5" />
               </Button>
@@ -152,7 +151,7 @@ export default function ChatInterface({ user, userProfile, connectedAccounts, on
                   <Sparkles className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold text-gray-900">Future Self Chat</h1>
+                  <h1 className="text-2xl font-bold text-gray-900">Future Self Chat</h1>
                   <p className="text-sm text-gray-600">Talking with your {userProfile.futureAge}-year-old self</p>
                 </div>
               </div>
@@ -161,16 +160,14 @@ export default function ChatInterface({ user, userProfile, connectedAccounts, on
             <div className="flex items-center space-x-4">
               <Button 
                 onClick={() => onNavigate('scenarios')}
-                variant="outline"
-                className="hidden md:flex items-center space-x-2 rounded-xl border-gray-300 text-gray-700 hover:bg-gray-50"
+                className="hidden md:flex items-center space-x-2 bg-[#725BF4] hover:bg-[#5d47d9] text-white font-semibold px-6 py-2 rounded-xl transition-all duration-200"
               >
                 <BarChart3 className="w-4 h-4" />
                 <span>Scenarios</span>
               </Button>
               <Button 
                 onClick={() => onNavigate('actions')}
-                variant="outline"
-                className="hidden md:flex items-center space-x-2 rounded-xl border-gray-300 text-gray-700 hover:bg-gray-50"
+                className="hidden md:flex items-center space-x-2 bg-[#00A175] hover:bg-[#008a64] text-white font-semibold px-6 py-2 rounded-xl transition-all duration-200"
               >
                 <Target className="w-4 h-4" />
                 <span>Actions</span>
@@ -178,7 +175,7 @@ export default function ChatInterface({ user, userProfile, connectedAccounts, on
               <Button 
                 onClick={() => onNavigate('progress')}
                 variant="outline"
-                className="hidden md:flex items-center space-x-2 rounded-xl border-gray-300 text-gray-700 hover:bg-gray-50"
+                className="hidden md:flex items-center space-x-2 border-2 border-gray-300 text-gray-700 hover:bg-gray-50 font-semibold px-6 py-2 rounded-xl transition-all duration-200"
               >
                 <TrendingUp className="w-4 h-4" />
                 <span>Progress</span>
@@ -189,123 +186,127 @@ export default function ChatInterface({ user, userProfile, connectedAccounts, on
       </header>
 
       {/* Chat Messages */}
-      <div className="max-w-4xl mx-auto p-6">
-        <div className="space-y-6 mb-6">
-          {messages.map((message) => {
-            const senderInfo = getSenderInfo(message);
-            const isUser = message.sender === 'user';
-            
-            return (
-              <div key={message.id} className={`flex items-start space-x-4 ${isUser ? 'flex-row-reverse space-x-reverse' : ''}`}>
-                {/* Avatar */}
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${senderInfo.bgColor}`}>
-                  {message.sender === 'user' ? (
-                    senderInfo.avatar ? (
-                      <img src={senderInfo.avatar} alt="User" className="w-full h-full rounded-full object-cover" />
+      <div className="container mx-auto px-6 py-8">
+        <div className="max-w-4xl mx-auto">
+          <div className="space-y-8 mb-8">
+            {messages.map((message) => {
+              const senderInfo = getSenderInfo(message);
+              const isUser = message.sender === 'user';
+              
+              return (
+                <div key={message.id} className={`flex items-start space-x-4 ${isUser ? 'flex-row-reverse space-x-reverse' : ''}`}>
+                  {/* Avatar */}
+                  <div className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${senderInfo.bgColor}`}>
+                    {message.sender === 'user' ? (
+                      senderInfo.avatar ? (
+                        <img src={senderInfo.avatar} alt="User" className="w-full h-full rounded-full object-cover" />
+                      ) : (
+                        <User className="w-6 h-6 text-white" />
+                      )
+                    ) : message.sender === 'future_self' ? (
+                      <div className="text-white font-bold text-sm">{message.futureAge}</div>
                     ) : (
-                      <User className="w-6 h-6 text-white" />
-                    )
-                  ) : message.sender === 'future_self' ? (
-                    <div className="text-white font-bold text-sm">{message.futureAge}</div>
-                  ) : (
-                    <Bot className="w-6 h-6 text-white" />
-                  )}
-                </div>
-                
-                {/* Message Bubble */}
-                <div className={`max-w-2xl ${isUser ? 'text-right' : 'text-left'}`}>
-                  <div className="flex items-center space-x-2 mb-2">
-                    <span className="text-sm font-semibold text-gray-700">{senderInfo.name}</span>
-                    <span className="text-xs text-gray-500">
-                      {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                    </span>
+                      <Bot className="w-6 h-6 text-white" />
+                    )}
                   </div>
                   
-                  <div className={`rounded-2xl px-6 py-4 ${senderInfo.bubbleColor}`}>
-                    <p className="leading-relaxed whitespace-pre-wrap">{message.content}</p>
+                  {/* Message Bubble */}
+                  <div className={`max-w-2xl ${isUser ? 'text-right' : 'text-left'}`}>
+                    <div className="flex items-center space-x-2 mb-2">
+                      <span className="text-sm font-semibold text-gray-700">{senderInfo.name}</span>
+                      <span className="text-xs text-gray-500">
+                        {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </div>
+                    
+                    <div className={`rounded-2xl px-6 py-4 ${senderInfo.bubbleColor}`}>
+                      <p className="leading-relaxed whitespace-pre-wrap">{message.content}</p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+            
+            {/* Loading/Analyzing State */}
+            {isLoading && (
+              <div className="flex items-start space-x-4">
+                <div className="w-12 h-12 bg-[#00A175] rounded-full flex items-center justify-center flex-shrink-0">
+                  <div className="text-white font-bold text-sm">{userProfile.futureAge}</div>
+                </div>
+                <div className="max-w-2xl">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <span className="text-sm font-semibold text-gray-700">Future You ({userProfile.futureAge})</span>
+                  </div>
+                  <div className="rounded-2xl px-6 py-4 bg-[#00A175] bg-opacity-10 border border-[#00A175] border-opacity-20">
+                    {isAnalyzing ? (
+                      <div className="flex items-center space-x-3">
+                        <div className="flex space-x-1">
+                          <div className="w-2 h-2 bg-[#00A175] rounded-full animate-bounce" />
+                          <div className="w-2 h-2 bg-[#00A175] rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
+                          <div className="w-2 h-2 bg-[#00A175] rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
+                        </div>
+                        <span className="text-gray-700">Analyzing your {connectedAccounts.join(' & ')} data...</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center space-x-3">
+                        <div className="flex space-x-1">
+                          <div className="w-2 h-2 bg-[#00A175] rounded-full animate-bounce" />
+                          <div className="w-2 h-2 bg-[#00A175] rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
+                          <div className="w-2 h-2 bg-[#00A175] rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
+                        </div>
+                        <span className="text-gray-700">Thinking...</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
-            );
-          })}
-          
-          {/* Loading/Analyzing State */}
-          {isLoading && (
-            <div className="flex items-start space-x-4">
-              <div className="w-12 h-12 bg-[#00A175] rounded-full flex items-center justify-center flex-shrink-0">
-                <div className="text-white font-bold text-sm">{userProfile.futureAge}</div>
-              </div>
-              <div className="max-w-2xl">
-                <div className="flex items-center space-x-2 mb-2">
-                  <span className="text-sm font-semibold text-gray-700">Future You ({userProfile.futureAge})</span>
-                </div>
-                <div className="rounded-2xl px-6 py-4 bg-[#00A175] bg-opacity-10 border border-[#00A175] border-opacity-20">
-                  {isAnalyzing ? (
-                    <div className="flex items-center space-x-3">
-                      <div className="flex space-x-1">
-                        <div className="w-2 h-2 bg-[#00A175] rounded-full animate-bounce" />
-                        <div className="w-2 h-2 bg-[#00A175] rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
-                        <div className="w-2 h-2 bg-[#00A175] rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
-                      </div>
-                      <span className="text-gray-700">Analyzing your {connectedAccounts.join(' & ')} data...</span>
-                    </div>
-                  ) : (
-                    <div className="flex items-center space-x-3">
-                      <div className="flex space-x-1">
-                        <div className="w-2 h-2 bg-[#00A175] rounded-full animate-bounce" />
-                        <div className="w-2 h-2 bg-[#00A175] rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
-                        <div className="w-2 h-2 bg-[#00A175] rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
-                      </div>
-                      <span className="text-gray-700">Thinking...</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          )}
-          
-          <div ref={messagesEndRef} />
+            )}
+            
+            <div ref={messagesEndRef} />
+          </div>
         </div>
       </div>
 
       {/* Input Area */}
       <div className="sticky bottom-0 bg-white border-t border-gray-100 p-6">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex items-center space-x-4">
-            <div className="flex-1 relative">
-              <Input
-                value={inputMessage}
-                onChange={(e) => setInputMessage(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder="Ask your future self anything about money..."
-                className="h-14 pr-16 rounded-2xl border-2 border-gray-200 focus:border-[#725BF4] bg-white text-base"
-                disabled={isLoading}
-              />
+        <div className="container mx-auto">
+          <div className="max-w-4xl mx-auto">
+            <div className="flex items-center space-x-4">
+              <div className="flex-1 relative">
+                <Input
+                  value={inputMessage}
+                  onChange={(e) => setInputMessage(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder="Ask your future self anything about money..."
+                  className="h-14 pr-16 rounded-2xl border-2 border-gray-200 focus:border-[#725BF4] bg-white text-base"
+                  disabled={isLoading}
+                />
+                <Button
+                  onClick={toggleVoice}
+                  variant="ghost"
+                  className={`absolute right-2 top-1/2 transform -translate-y-1/2 w-10 h-10 rounded-full ${
+                    isVoiceActive ? 'bg-red-100 text-red-600' : 'text-gray-500 hover:text-gray-700'
+                  }`}
+                >
+                  {isVoiceActive ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+                </Button>
+              </div>
+              
               <Button
-                onClick={toggleVoice}
-                variant="ghost"
-                className={`absolute right-2 top-1/2 transform -translate-y-1/2 w-10 h-10 rounded-full ${
-                  isVoiceActive ? 'bg-red-100 text-red-600' : 'text-gray-500 hover:text-gray-700'
-                }`}
+                onClick={handleSendMessage}
+                disabled={!inputMessage.trim() || isLoading}
+                className="h-14 w-14 rounded-full bg-[#725BF4] hover:bg-[#5d47d9] text-white border-0 transition-all duration-200 disabled:opacity-50"
               >
-                {isVoiceActive ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+                <Send className="w-5 h-5" />
               </Button>
             </div>
             
-            <Button
-              onClick={handleSendMessage}
-              disabled={!inputMessage.trim() || isLoading}
-              className="h-14 w-14 rounded-full bg-[#725BF4] hover:bg-[#5d47d9] text-white border-0 transition-all duration-200 disabled:opacity-50"
-            >
-              <Send className="w-5 h-5" />
-            </Button>
-          </div>
-          
-          <div className="flex justify-center mt-4">
-            <p className="text-xs text-gray-500 text-center max-w-2xl">
-              Your future self has access to your {connectedAccounts.join(' & ')} data to provide personalized advice. 
-              All conversations are private and secure.
-            </p>
+            <div className="flex justify-center mt-4">
+              <p className="text-xs text-gray-500 text-center max-w-2xl">
+                Your future self has access to your {connectedAccounts.join(' & ')} data to provide personalized advice. 
+                All conversations are private and secure.
+              </p>
+            </div>
           </div>
         </div>
       </div>
