@@ -4,21 +4,32 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Target, Zap, CheckCircle, TrendingUp, DollarSign, PiggyBank, CreditCard, Filter } from 'lucide-react';
-import { mockApi } from '@/lib/mockApi';
 import Navbar from '@/components/Navbar';
+import { Recommendation, UserProfile } from '@/lib/types';
 
 interface ActionCenterProps {
-  userProfile: any;
+  userProfile: UserProfile;
+  recommendations: Recommendation[];
   onNavigate: (screen: string) => void;
+  onMarkAsDone?: (actionId: string) => void;
+  onRefreshRecommendations?: () => void;
 }
 
-export default function ActionCenter({ userProfile, onNavigate }: ActionCenterProps) {
-  const [recommendations] = useState(mockApi.getRecommendations());
+export default function ActionCenter({ 
+  userProfile, 
+  recommendations, 
+  onNavigate, 
+  onMarkAsDone,
+  onRefreshRecommendations 
+}: ActionCenterProps) {
   const [completedActions, setCompletedActions] = useState<string[]>([]);
   const [filter, setFilter] = useState<'all' | 'high_impact' | 'low_effort'>('all');
 
   const handleMarkAsDone = (actionId: string) => {
     setCompletedActions(prev => [...prev, actionId]);
+    if (onMarkAsDone) {
+      onMarkAsDone(actionId);
+    }
     // Add confetti animation here
   };
 
@@ -135,11 +146,33 @@ export default function ActionCenter({ userProfile, onNavigate }: ActionCenterPr
           </Card>
         </div>
 
+        {/* Empty State */}
+        {recommendations.length === 0 && (
+          <div className="text-center py-16">
+            <Target className="w-16 h-16 mx-auto mb-6 text-slate-400" />
+            <h3 className="text-2xl font-bold text-slate-600 mb-4">No recommendations available</h3>
+            <p className="text-slate-500 mb-6">
+              {onRefreshRecommendations 
+                ? "Try refreshing to get new personalized recommendations." 
+                : "Connect to API to get personalized financial recommendations."
+              }
+            </p>
+            {onRefreshRecommendations && (
+              <Button 
+                onClick={onRefreshRecommendations}
+                className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-2xl"
+              >
+                Refresh Recommendations
+              </Button>
+            )}
+          </div>
+        )}
+
         {/* Recommendations Grid */}
         <div className="grid gap-6">
           {filteredRecommendations.map((recommendation) => {
             const IconComponent = getActionIcon(recommendation.category);
-            const isCompleted = completedActions.includes(recommendation.id);
+            const isCompleted = completedActions.includes(recommendation.id) || recommendation.isCompleted;
             
             return (
               <Card
@@ -231,7 +264,7 @@ export default function ActionCenter({ userProfile, onNavigate }: ActionCenterPr
           })}
         </div>
 
-        {filteredRecommendations.length === 0 && (
+        {filteredRecommendations.length === 0 && recommendations.length > 0 && (
           <div className="text-center py-16">
             <Target className="w-16 h-16 mx-auto mb-6 text-slate-400" />
             <h3 className="text-2xl font-bold text-slate-600 mb-4">No actions match your filter</h3>

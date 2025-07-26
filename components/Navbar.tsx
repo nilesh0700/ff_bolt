@@ -180,7 +180,7 @@ export default function Navbar({
                     <div className="flex flex-col space-y-1 leading-none">
                       <p className="font-medium text-sm">{auth.user?.name || 'User'}</p>
                       <p className="text-xs text-gray-500 truncate max-w-[150px]">
-                        {auth.user?.email || 'user@example.com'}
+                        {auth.user?.email || 'user@email.com'}
                       </p>
                       {auth.hasProfile && (
                         <Badge variant="secondary" className="text-xs w-fit mt-1">

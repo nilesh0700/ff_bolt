@@ -194,7 +194,7 @@ export default function ProfilePage({
                           type="tel"
                           value={editedUser.phone}
                           onChange={(e) => setEditedUser(prev => ({ ...prev, phone: e.target.value }))}
-                          placeholder="+91 98765 43210"
+                          placeholder="+91 XXXXX XXXXX"
                           className="h-12 text-lg mt-2"
                         />
                       </div>

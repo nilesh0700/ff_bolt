@@ -39,6 +39,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
     router.push('/profile');
   };
 
+  // Static demo scenarios for marketing purposes
   const demoScenarios = [
     {
       question: "Should I buy a car worth ₹12L?",
@@ -349,7 +350,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
                   <div className="space-y-2">
                     <div className="flex items-center space-x-2">
                       <div className="w-2 h-2 bg-[#00A175] rounded-full"></div>
-                      <span className="text-xs text-gray-600">Increase SIP by ₹5K</span>
+                                              <span className="text-xs text-gray-600">Increase SIP by ₹5K</span>
                     </div>
                     <div className="flex items-center space-x-2">
                       <div className="w-2 h-2 bg-[#725BF4] rounded-full"></div>

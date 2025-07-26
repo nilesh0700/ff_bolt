@@ -6,34 +6,27 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Send, Mic, MicOff, BarChart3, Target, TrendingUp, Menu, User, Bot, Sparkles } from 'lucide-react';
 import Avatar from '@/components/Avatar';
-import { mockApi } from '@/lib/mockApi';
 import Navbar from '@/components/Navbar';
-
-interface Message {
-  id: string;
-  content: string;
-  sender: 'user' | 'future_self' | 'ai_assistant';
-  timestamp: Date;
-  futureAge?: number;
-}
+import { ChatMessage, User as UserType, UserProfile, ChatResponse } from '@/lib/types';
 
 interface ChatInterfaceProps {
-  user: any;
-  userProfile: any;
+  user: UserType;
+  userProfile: UserProfile;
   connectedAccounts: string[];
+  initialMessages?: ChatMessage[];
   onNavigate: (screen: string) => void;
+  onSendMessage?: (message: string, userProfile: UserProfile) => Promise<ChatResponse>;
 }
 
-export default function ChatInterface({ user, userProfile, connectedAccounts, onNavigate }: ChatInterfaceProps) {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      content: `Hey there! I'm your ${userProfile.futureAge}-year-old self. I've been looking at your Fi Money data and I'm excited to help you make some great financial decisions! What's on your mind?`,
-      sender: 'future_self',
-      timestamp: new Date(),
-      futureAge: userProfile.futureAge
-    }
-  ]);
+export default function ChatInterface({ 
+  user, 
+  userProfile, 
+  connectedAccounts, 
+  initialMessages = [],
+  onNavigate,
+  onSendMessage 
+}: ChatInterfaceProps) {
+  const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
   const [inputMessage, setInputMessage] = useState('');
   const [isVoiceActive, setIsVoiceActive] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -51,7 +44,7 @@ export default function ChatInterface({ user, userProfile, connectedAccounts, on
   const handleSendMessage = async () => {
     if (!inputMessage.trim()) return;
 
-    const userMessage: Message = {
+    const userMessage: ChatMessage = {
       id: Date.now().toString(),
       content: inputMessage,
       sender: 'user',
@@ -64,22 +57,42 @@ export default function ChatInterface({ user, userProfile, connectedAccounts, on
     setIsAnalyzing(true);
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      setIsAnalyzing(false);
+      if (onSendMessage) {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        setIsAnalyzing(false);
 
-      const response = await mockApi.sendChatMessage(inputMessage, userProfile);
-      
-      const aiMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        content: response.message,
-        sender: response.sender,
-        timestamp: new Date(),
-        futureAge: response.futureAge
-      };
+        const response = await onSendMessage(inputMessage, userProfile);
+        
+        const aiMessage: ChatMessage = {
+          id: (Date.now() + 1).toString(),
+          content: response.message,
+          sender: response.sender,
+          timestamp: new Date(),
+          futureAge: response.futureAge
+        };
 
-      setMessages(prev => [...prev, aiMessage]);
+        setMessages(prev => [...prev, aiMessage]);
+      } else {
+        // Fallback if no onSendMessage provided
+        setIsAnalyzing(false);
+        const fallbackMessage: ChatMessage = {
+          id: (Date.now() + 1).toString(),
+          content: "I'm here to help you with your financial questions! (Connect to API for personalized responses)",
+          sender: 'ai_assistant',
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, fallbackMessage]);
+      }
     } catch (error) {
       console.error('Error sending message:', error);
+      setIsAnalyzing(false);
+      const errorMessage: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        content: "Sorry, I'm having trouble connecting right now. Please try again.",
+        sender: 'ai_assistant',
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
     }
@@ -96,7 +109,7 @@ export default function ChatInterface({ user, userProfile, connectedAccounts, on
     setIsVoiceActive(!isVoiceActive);
   };
 
-  const getSenderInfo = (message: Message) => {
+  const getSenderInfo = (message: ChatMessage) => {
     switch (message.sender) {
       case 'user':
         return {
@@ -141,6 +154,21 @@ export default function ChatInterface({ user, userProfile, connectedAccounts, on
       {/* Chat Messages */}
       <div className="container mx-auto px-6 py-8">
         <div className="max-w-4xl mx-auto">
+          {/* Welcome message if no initial messages */}
+          {messages.length === 0 && (
+            <div className="text-center py-16">
+              <div className="w-20 h-20 bg-[#00A175] rounded-full flex items-center justify-center mx-auto mb-6">
+                <span className="text-white font-bold text-2xl">{userProfile.futureAge}</span>
+              </div>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                Start a conversation with your future self
+              </h2>
+              <p className="text-gray-600 max-w-md mx-auto">
+                Ask questions about your financial future, investments, or any money decisions you're considering.
+              </p>
+            </div>
+          )}
+
           <div className="space-y-8 mb-8">
             {messages.map((message) => {
               const senderInfo = getSenderInfo(message);
@@ -230,7 +258,7 @@ export default function ChatInterface({ user, userProfile, connectedAccounts, on
                   value={inputMessage}
                   onChange={(e) => setInputMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Ask your future self anything about money..."
+                  placeholder="Ask your future self anything about finances..."
                   className="h-14 pr-16 rounded-2xl border-2 border-gray-200 focus:border-[#725BF4] bg-white text-base"
                   disabled={isLoading}
                 />

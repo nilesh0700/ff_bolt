@@ -1,22 +1,96 @@
 // Mock API for simulating backend responses
+import { generateRandomAmount, generateRandomDate, formatCurrency } from './utils';
+
+// Generate realistic financial data based on user profile
+const generateFinancialProfile = () => {
+  const monthlyIncome = generateRandomAmount(50000, 150000); // ₹50K to ₹1.5L
+  const expenseRatio = 0.6 + Math.random() * 0.25; // 60-85% of income
+  const monthlyExpenses = Math.floor(monthlyIncome * expenseRatio);
+  const savingsRate = monthlyIncome - monthlyExpenses;
+  
+  return {
+    monthlyIncome,
+    monthlyExpenses,
+    savingsRate,
+    balance: generateRandomAmount(50000, 500000) // Account balance
+  };
+};
+
+const generateTransactions = (monthlyIncome: number, monthlyExpenses: number) => {
+  const categories = [
+    { name: 'Salary Credit', type: 'income', amount: monthlyIncome },
+    { name: 'Rent Payment', type: 'housing', amount: -Math.floor(monthlyExpenses * 0.3) },
+    { name: 'Groceries', type: 'food', amount: -generateRandomAmount(5000, 15000) },
+    { name: 'Transportation', type: 'transport', amount: -generateRandomAmount(800, 3000) },
+    { name: 'Entertainment', type: 'entertainment', amount: -generateRandomAmount(500, 2000) }
+  ];
+  
+  return categories.map((cat, index) => ({
+    id: index + 1,
+    description: cat.name,
+    amount: cat.amount,
+    date: generateRandomDate(30),
+    category: cat.type
+  }));
+};
+
+const generateInvestmentData = () => {
+  const stocks = [
+    { symbol: 'RELIANCE', basePrice: 2400 },
+    { symbol: 'TCS', basePrice: 3100 },
+    { symbol: 'INFY', basePrice: 1400 },
+    { symbol: 'HDFC', basePrice: 2700 },
+    { symbol: 'ICICI', basePrice: 800 }
+  ];
+  
+  let totalInvestment = 0;
+  let totalValue = 0;
+  
+  const holdings = stocks.map(stock => {
+    const quantity = generateRandomAmount(10, 50);
+    const priceVariation = 0.8 + Math.random() * 0.4; // ±20% from base price
+    const avgPrice = Math.floor(stock.basePrice * priceVariation);
+    const currentPriceVariation = 0.9 + Math.random() * 0.2; // ±10% from avg price
+    const currentPrice = Math.floor(avgPrice * currentPriceVariation);
+    const value = quantity * currentPrice;
+    
+    totalInvestment += quantity * avgPrice;
+    totalValue += value;
+    
+    return {
+      symbol: stock.symbol,
+      quantity,
+      avgPrice,
+      currentPrice,
+      value
+    };
+  });
+  
+  const totalReturns = totalValue - totalInvestment;
+  const returnsPercent = ((totalReturns / totalInvestment) * 100);
+  
+  return {
+    totalValue,
+    totalInvestment,
+    totalReturns,
+    returnsPercent: Math.round(returnsPercent * 100) / 100,
+    holdings
+  };
+};
 
 export const mockApi = {
   // Simulate Fi Money connection
   connectFi: async () => {
     await new Promise(resolve => setTimeout(resolve, 2000));
+    const profile = generateFinancialProfile();
+    
     return {
       success: true,
       data: {
-        balance: 125000,
-        monthlyIncome: 85000,
-        monthlyExpenses: 62000,
-        transactions: [
-          { id: 1, description: 'Salary Credit', amount: 85000, date: '2024-02-01', category: 'income' },
-          { id: 2, description: 'Rent Payment', amount: -25000, date: '2024-02-02', category: 'housing' },
-          { id: 3, description: 'Groceries', amount: -8500, date: '2024-02-03', category: 'food' },
-          { id: 4, description: 'Uber', amount: -1200, date: '2024-02-04', category: 'transport' },
-          { id: 5, description: 'Netflix', amount: -799, date: '2024-02-05', category: 'entertainment' }
-        ]
+        balance: profile.balance,
+        monthlyIncome: profile.monthlyIncome,
+        monthlyExpenses: profile.monthlyExpenses,
+        transactions: generateTransactions(profile.monthlyIncome, profile.monthlyExpenses)
       }
     };
   },
@@ -24,21 +98,11 @@ export const mockApi = {
   // Simulate Zerodha connection
   connectZerodha: async () => {
     await new Promise(resolve => setTimeout(resolve, 2000));
+    const investmentData = generateInvestmentData();
+    
     return {
       success: true,
-      data: {
-        totalValue: 450000,
-        totalInvestment: 380000,
-        totalReturns: 70000,
-        returnsPercent: 18.42,
-        holdings: [
-          { symbol: 'RELIANCE', quantity: 50, avgPrice: 2450, currentPrice: 2680, value: 134000 },
-          { symbol: 'TCS', quantity: 30, avgPrice: 3200, currentPrice: 3580, value: 107400 },
-          { symbol: 'INFY', quantity: 40, avgPrice: 1450, currentPrice: 1620, value: 64800 },
-          { symbol: 'HDFC', quantity: 25, avgPrice: 2800, currentPrice: 3100, value: 77500 },
-          { symbol: 'ICICI', quantity: 35, avgPrice: 850, currentPrice: 920, value: 32200 }
-        ]
-      }
+      data: investmentData
     };
   },
 
@@ -46,19 +110,28 @@ export const mockApi = {
   sendChatMessage: async (message: string, userProfile: any) => {
     await new Promise(resolve => setTimeout(resolve, 1000));
     
+    // Generate dynamic financial profile for responses
+    const financialProfile = generateFinancialProfile();
+    const savingsAmount = formatCurrency(financialProfile.savingsRate);
+    const emergencyFund = formatCurrency(financialProfile.savingsRate * 6);
+    const investmentAmount = formatCurrency(Math.floor(financialProfile.savingsRate * 0.7));
+    const diningBudget = formatCurrency(generateRandomAmount(8000, 15000));
+    const optimizedAmount = formatCurrency(generateRandomAmount(2000, 5000));
+    const projectedGains = formatCurrency(generateRandomAmount(1500000, 3500000));
+    
     const responses = [
       {
-        message: `Hey! Looking at your Fi Money data, I can see you're saving about ₹23,000 per month. That's fantastic! At this rate, by the time I'm ${userProfile.futureAge}, we'll have built a solid emergency fund of ₹8 lakhs. But here's what I'm thinking - what if we could optimize your spending on dining out? I noticed you spend about ₹12,000 monthly on restaurants. If we cut that by just 30%, we could invest an extra ₹3,600 monthly in mutual funds. Over 20 years, that's an additional ₹28 lakhs! 🚀`,
+        message: `Hey! Looking at your financial data, I can see you're saving about ${savingsAmount} per month. That's fantastic! At this rate, by the time I'm ${userProfile.futureAge}, we'll have built a solid emergency fund of ${emergencyFund}. But here's what I'm thinking - what if we could optimize your spending patterns? If we adjust some expenses and invest an extra ${optimizedAmount} monthly in mutual funds, we could build an additional ${projectedGains} over the next 20 years! 🚀`,
         sender: 'future_self' as const,
         futureAge: userProfile.futureAge
       },
       {
-        message: `I've been analyzing your investment portfolio on Zerodha. You're doing well with a 18.4% return! However, I notice you're heavily invested in large-cap stocks. While that's safe, diversifying into some mid-cap and small-cap funds could potentially boost our returns. Based on your ${userProfile.personality} risk profile, I'd suggest allocating 20% to mid-cap funds. This could increase our portfolio value by an estimated ₹15 lakhs by retirement! Want me to show you some specific fund recommendations?`,
+        message: `I've been analyzing your investment approach. You're doing well! However, diversifying your portfolio could potentially boost our returns. Based on your ${userProfile.personality} risk profile, I'd suggest optimizing our asset allocation. This could increase our portfolio value significantly by retirement! Want me to show you some specific recommendations tailored to your current financial situation?`,
         sender: 'future_self' as const,
         futureAge: userProfile.futureAge
       },
       {
-        message: `Based on your current financial data and goals, I've run some projections. Here's what I found: Your current savings rate of 27% is excellent! If you maintain this, plus the investment optimizations we discussed, you'll be able to achieve your dream home goal by 2029 - that's 2 years earlier than your original target! The key is consistency and making small adjustments. Should I create a detailed action plan for you?`,
+        message: `Based on your current financial data and goals, I've run some projections. Here's what I found: Your savings rate is excellent! If you maintain this, plus some strategic optimizations we can discuss, you'll be able to achieve your primary financial goals ahead of schedule. The key is consistency and making smart adjustments. Should I create a detailed action plan for you?`,
         sender: 'ai_assistant' as const
       }
     ];
@@ -68,132 +141,90 @@ export const mockApi = {
 
   // Get financial scenarios
   getScenarios: () => {
+    const baseProfile = generateFinancialProfile();
+    const currentYear = new Date().getFullYear();
+    const baseNetWorth = generateRandomAmount(400000, 800000);
+    
+    const generateScenario = (multiplier: number, riskLevel: string, title: string, description: string) => {
+      const finalNetWorth = Math.floor(baseNetWorth * multiplier);
+      const confidence = riskLevel === 'conservative' ? 85 : riskLevel === 'balanced' ? 78 : 65;
+      
+      return {
+        title,
+        description,
+        type: riskLevel,
+        finalNetWorth,
+        confidenceScore: confidence,
+        timeline: [
+          {
+            year: currentYear,
+            netWorth: baseNetWorth,
+            debt: 0,
+            monthlyIncome: baseProfile.monthlyIncome,
+            monthlyExpenses: baseProfile.monthlyExpenses,
+            milestones: []
+          },
+          {
+            year: currentYear + 6,
+            netWorth: Math.floor(finalNetWorth * 0.4),
+            debt: 0,
+            monthlyIncome: Math.floor(baseProfile.monthlyIncome * 1.4),
+            monthlyExpenses: Math.floor(baseProfile.monthlyExpenses * 1.2),
+            milestones: [
+              { 
+                type: 'emergency', 
+                title: 'Emergency Fund Complete', 
+                description: '6 months expenses saved', 
+                value: Math.floor(baseProfile.monthlyExpenses * 6) 
+              }
+            ]
+          },
+          {
+            year: currentYear + 16,
+            netWorth: finalNetWorth,
+            debt: 0,
+            monthlyIncome: Math.floor(baseProfile.monthlyIncome * 2.1),
+            monthlyExpenses: Math.floor(baseProfile.monthlyExpenses * 1.5),
+            milestones: [
+              { 
+                type: 'house', 
+                title: 'Dream Home Purchased', 
+                description: riskLevel === 'aggressive' ? 'Luxury villa with amenities' : 
+                           riskLevel === 'balanced' ? '4BHK with garden' : '3BHK in prime location', 
+                value: riskLevel === 'aggressive' ? 15000000 : 
+                       riskLevel === 'balanced' ? 12000000 : 8000000 
+              },
+              { 
+                type: 'education', 
+                title: riskLevel === 'aggressive' ? 'International Education Fund' : 'Education Fund Ready', 
+                description: riskLevel === 'aggressive' ? 'Global education opportunities' :
+                           riskLevel === 'balanced' ? 'Premium education secured' : 'Children\'s education secured', 
+                value: riskLevel === 'aggressive' ? 6000000 : 
+                       riskLevel === 'balanced' ? 4000000 : 2500000 
+              }
+            ]
+          }
+        ]
+      };
+    };
+    
     return [
-      {
-        title: "Conservative Growth",
-        description: "Steady, low-risk investments with guaranteed returns",
-        type: "conservative",
-        finalNetWorth: 2500000,
-        confidenceScore: 85,
-        timeline: [
-          {
-            year: 2024,
-            netWorth: 575000,
-            debt: 0,
-            monthlyIncome: 85000,
-            monthlyExpenses: 62000,
-            milestones: []
-          },
-          {
-            year: 2030,
-            netWorth: 1200000,
-            debt: 0,
-            monthlyIncome: 120000,
-            monthlyExpenses: 75000,
-            milestones: [
-              { type: 'emergency', title: 'Emergency Fund Complete', description: '6 months expenses saved', value: 450000 }
-            ]
-          },
-          {
-            year: 2040,
-            netWorth: 2500000,
-            debt: 0,
-            monthlyIncome: 180000,
-            monthlyExpenses: 95000,
-            milestones: [
-              { type: 'house', title: 'Dream Home Purchased', description: '3BHK in prime location', value: 8000000 },
-              { type: 'education', title: 'Education Fund Ready', description: 'Children\'s education secured', value: 2500000 }
-            ]
-          }
-        ]
-      },
-      {
-        title: "Balanced Portfolio",
-        description: "Mix of growth and stability with moderate risk",
-        type: "balanced",
-        finalNetWorth: 3800000,
-        confidenceScore: 78,
-        timeline: [
-          {
-            year: 2024,
-            netWorth: 575000,
-            debt: 0,
-            monthlyIncome: 85000,
-            monthlyExpenses: 62000,
-            milestones: []
-          },
-          {
-            year: 2030,
-            netWorth: 1800000,
-            debt: 0,
-            monthlyIncome: 125000,
-            monthlyExpenses: 78000,
-            milestones: [
-              { type: 'emergency', title: 'Emergency Fund Complete', description: '6 months expenses saved', value: 468000 },
-              { type: 'car', title: 'New Car Purchased', description: 'Upgraded to premium sedan', value: 1500000 }
-            ]
-          },
-          {
-            year: 2040,
-            netWorth: 3800000,
-            debt: 0,
-            monthlyIncome: 200000,
-            monthlyExpenses: 110000,
-            milestones: [
-              { type: 'house', title: 'Dream Home Purchased', description: '4BHK with garden', value: 12000000 },
-              { type: 'education', title: 'Education Fund Ready', description: 'Premium education secured', value: 4000000 }
-            ]
-          }
-        ]
-      },
-      {
-        title: "Aggressive Growth",
-        description: "High-growth investments with higher risk tolerance",
-        type: "aggressive",
-        finalNetWorth: 5200000,
-        confidenceScore: 65,
-        timeline: [
-          {
-            year: 2024,
-            netWorth: 575000,
-            debt: 0,
-            monthlyIncome: 85000,
-            monthlyExpenses: 62000,
-            milestones: []
-          },
-          {
-            year: 2030,
-            netWorth: 2200000,
-            debt: 0,
-            monthlyIncome: 140000,
-            monthlyExpenses: 85000,
-            milestones: [
-              { type: 'emergency', title: 'Emergency Fund Complete', description: '6 months expenses saved', value: 510000 },
-              { type: 'car', title: 'Luxury Car Purchased', description: 'Premium luxury vehicle', value: 2500000 }
-            ]
-          },
-          {
-            year: 2040,
-            netWorth: 5200000,
-            debt: 0,
-            monthlyIncome: 250000,
-            monthlyExpenses: 130000,
-            milestones: [
-              { type: 'house', title: 'Luxury Home Purchased', description: 'Premium villa with amenities', value: 15000000 },
-              { type: 'education', title: 'International Education Fund', description: 'Global education opportunities', value: 6000000 }
-            ]
-          }
-        ]
-      }
-    ];
+      generateScenario(4.3, 'conservative', 'Conservative Growth', 'Steady, low-risk investments with guaranteed returns'),
+      generateScenario(6.6, 'balanced', 'Balanced Portfolio', 'Mix of growth and stability with moderate risk'),
+      generateScenario(9.0, 'aggressive', 'Aggressive Growth', 'High-growth investments with higher risk tolerance')
+    ].map((scenario, index) => ({
+      ...scenario,
+      id: `scenario_${Date.now()}_${index}`
+    }));
   },
 
   // Generate new scenarios
   generateNewScenarios: () => {
     // Return slightly different scenarios
     const baseScenarios = mockApi.getScenarios();
-    return baseScenarios.map(scenario => ({
+    return baseScenarios.map((scenario, index) => ({
       ...scenario,
+      id: `scenario_${Date.now()}_new_${index}`,
       finalNetWorth: scenario.finalNetWorth + Math.floor(Math.random() * 500000),
       confidenceScore: Math.max(60, Math.min(90, scenario.confidenceScore + Math.floor(Math.random() * 20) - 10))
     }));
@@ -201,33 +232,47 @@ export const mockApi = {
 
   // Get recommendations
   getRecommendations: () => {
+    const baseProfile = generateFinancialProfile();
+    const currentSIP = generateRandomAmount(10000, 25000);
+    const optimizedSIP = currentSIP + 5000;
+    const sipPotentialSavings = Math.floor(optimizedSIP * 12 * 20 * 0.15); // 20 years with 15% returns
+    
+    const diningExpenses = generateRandomAmount(8000, 15000);
+    const optimizedDining = Math.floor(diningExpenses * 0.7); // 30% reduction
+    const diningPotentialSavings = Math.floor((diningExpenses - optimizedDining) * 12 * 10); // 10 years
+    
+    const emergencyFundTarget = Math.floor(baseProfile.monthlyExpenses * 6);
+    const monthlyEmergencyContribution = Math.floor(emergencyFundTarget / 12);
+    
+    const taxSavings = Math.floor(150000 * 0.3); // 30% tax rate on ₹1.5L investment
+    
     return [
       {
         id: '1',
         title: 'Increase SIP Amount',
-        description: 'Boost your monthly SIP from ₹15,000 to ₹20,000 to accelerate wealth building',
+        description: `Boost your monthly SIP from ${formatCurrency(currentSIP)} to ${formatCurrency(optimizedSIP)} to accelerate wealth building`,
         category: 'investment',
         impact: 'high',
         effort: 'low',
-        potentialSavings: 1200000,
+        potentialSavings: sipPotentialSavings,
         steps: [
           'Log into your mutual fund platform',
           'Navigate to existing SIP section',
-          'Increase amount by ₹5,000',
+          `Increase amount by ${formatCurrency(5000)}`,
           'Set up auto-debit for the new amount'
         ]
       },
       {
         id: '2',
         title: 'Optimize Dining Expenses',
-        description: 'Reduce dining out expenses by 30% and redirect savings to investments',
+        description: `Reduce dining out expenses by 30% and redirect savings to investments`,
         category: 'spending',
         impact: 'medium',
         effort: 'medium',
-        potentialSavings: 432000,
+        potentialSavings: diningPotentialSavings,
         steps: [
           'Track current dining expenses for one week',
-          'Set a monthly dining budget of ₹8,000',
+          `Set a monthly dining budget of ${formatCurrency(optimizedDining)}`,
           'Plan home-cooked meals for weekdays',
           'Limit restaurant visits to weekends only',
           'Invest the saved amount in index funds'
@@ -242,9 +287,9 @@ export const mockApi = {
         effort: 'low',
         potentialSavings: 0,
         steps: [
-          'Calculate 6 months of total expenses (₹3.72L)',
+          `Calculate 6 months of total expenses (${formatCurrency(emergencyFundTarget)})`,
           'Open a high-yield savings account',
-          'Set up automatic transfer of ₹15,000 monthly',
+          `Set up automatic transfer of ${formatCurrency(monthlyEmergencyContribution)} monthly`,
           'Keep funds easily accessible but separate'
         ]
       },
@@ -255,7 +300,7 @@ export const mockApi = {
         category: 'investment',
         impact: 'medium',
         effort: 'medium',
-        potentialSavings: 800000,
+        potentialSavings: generateRandomAmount(500000, 1200000),
         steps: [
           'Research top-performing mid-cap funds',
           'Allocate 20% of new investments to mid-cap',
@@ -270,7 +315,7 @@ export const mockApi = {
         category: 'debt',
         impact: 'low',
         effort: 'low',
-        potentialSavings: 24000,
+        potentialSavings: generateRandomAmount(15000, 35000),
         steps: [
           'Set up auto-pay for full credit card balance',
           'Use cards only for planned purchases',
@@ -285,7 +330,7 @@ export const mockApi = {
         category: 'investment',
         impact: 'medium',
         effort: 'low',
-        potentialSavings: 46800,
+        potentialSavings: taxSavings,
         steps: [
           'Calculate remaining 80C limit for this year',
           'Invest in top-rated ELSS funds',
@@ -298,90 +343,131 @@ export const mockApi = {
 
   // Get progress data
   getProgressData: () => {
+    const baseProfile = generateFinancialProfile();
+    const healthScore = generateRandomAmount(65, 90);
+    const savingsRate = Math.floor((baseProfile.savingsRate / baseProfile.monthlyIncome) * 100);
+    
+    // Generate dynamic progress metrics
+    const monthlyNetWorth = generateRandomAmount(30000, 60000);
+    const monthlyGrowthPercent = Number((Math.random() * 15 + 2).toFixed(1)); // 2-17%
+    
+    const quarterlyNetWorth = monthlyNetWorth * 3;
+    const quarterlyGrowthPercent = Number((monthlyGrowthPercent * 2.5).toFixed(1));
+    
+    const yearlyNetWorth = monthlyNetWorth * 12;
+    const yearlyGrowthPercent = Number((monthlyGrowthPercent * 8).toFixed(1));
+    
+    const investmentReturns = Math.floor(baseProfile.savingsRate * 0.6);
+    const returnPercent = Number((Math.random() * 5 + 1).toFixed(1)); // 1-6% monthly
+    
     return {
-      healthScore: 78,
+      healthScore,
       monthly: {
-        netWorthGrowth: 45000,
-        netWorthGrowthPercent: 8.2,
-        totalSaved: 23000,
-        savingsRate: 27,
-        investmentReturns: 12500,
-        investmentReturnsPercent: 2.8,
+        netWorthGrowth: monthlyNetWorth,
+        netWorthGrowthPercent: monthlyGrowthPercent,
+        totalSaved: baseProfile.savingsRate,
+        savingsRate,
+        investmentReturns,
+        investmentReturnsPercent: returnPercent,
         debtReduction: 0,
         debtReductionPercent: 0
       },
       quarterly: {
-        netWorthGrowth: 125000,
-        netWorthGrowthPercent: 24.1,
-        totalSaved: 69000,
-        savingsRate: 27,
-        investmentReturns: 38500,
-        investmentReturnsPercent: 8.9,
+        netWorthGrowth: quarterlyNetWorth,
+        netWorthGrowthPercent: quarterlyGrowthPercent,
+        totalSaved: baseProfile.savingsRate * 3,
+        savingsRate,
+        investmentReturns: investmentReturns * 3,
+        investmentReturnsPercent: returnPercent * 2.5,
         debtReduction: 0,
         debtReductionPercent: 0
       },
       yearly: {
-        netWorthGrowth: 485000,
-        netWorthGrowthPercent: 84.3,
-        totalSaved: 276000,
-        savingsRate: 27,
-        investmentReturns: 142000,
-        investmentReturnsPercent: 31.6,
+        netWorthGrowth: yearlyNetWorth,
+        netWorthGrowthPercent: yearlyGrowthPercent,
+        totalSaved: baseProfile.savingsRate * 12,
+        savingsRate,
+        investmentReturns: investmentReturns * 12,
+        investmentReturnsPercent: returnPercent * 8,
         debtReduction: 0,
         debtReductionPercent: 0
       },
       recentAchievements: [
         {
           title: 'Savings Milestone',
-          description: 'Saved ₹5 lakhs in total investments!',
-          date: 'February 15, 2024',
+          description: `Reached ${formatCurrency(generateRandomAmount(300000, 800000))} in total investments!`,
+          date: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { 
+            month: 'long', 
+            day: 'numeric', 
+            year: 'numeric' 
+          }),
           emoji: '🎉'
         },
         {
           title: 'Consistency Champion',
-          description: 'Maintained SIP for 12 consecutive months',
-          date: 'February 1, 2024',
+          description: `Maintained SIP for ${generateRandomAmount(6, 24)} consecutive months`,
+          date: new Date(Date.now() - Math.random() * 60 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { 
+            month: 'long', 
+            day: 'numeric', 
+            year: 'numeric' 
+          }),
           emoji: '🏆'
         },
         {
           title: 'Smart Spender',
-          description: 'Reduced dining expenses by 25% last month',
-          date: 'January 28, 2024',
+          description: `Reduced expenses by ${generateRandomAmount(15, 35)}% last month`,
+          date: new Date(Date.now() - Math.random() * 45 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { 
+            month: 'long', 
+            day: 'numeric', 
+            year: 'numeric' 
+          }),
           emoji: '💡'
         }
       ],
       goalsProgress: [
         {
           title: 'Emergency Fund',
-          progress: 75,
-          currentAmount: 280000,
-          targetAmount: 372000,
-          targetDate: 'June 2024',
+          progress: generateRandomAmount(60, 90),
+          currentAmount: generateRandomAmount(200000, 400000),
+          targetAmount: baseProfile.monthlyExpenses * 6,
+          targetDate: new Date(Date.now() + Math.random() * 365 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { 
+            month: 'long', 
+            year: 'numeric' 
+          }),
           onTrack: true
         },
         {
           title: 'Dream Home Down Payment',
-          progress: 35,
-          currentAmount: 700000,
-          targetAmount: 2000000,
-          targetDate: 'December 2027',
+          progress: generateRandomAmount(25, 50),
+          currentAmount: generateRandomAmount(500000, 1200000),
+          targetAmount: generateRandomAmount(1500000, 3000000),
+          targetDate: new Date(Date.now() + (3 + Math.random() * 2) * 365 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { 
+            month: 'long', 
+            year: 'numeric' 
+          }),
           onTrack: true
         },
         {
           title: 'Retirement Fund',
-          progress: 12,
-          currentAmount: 575000,
-          targetAmount: 5000000,
-          targetDate: 'December 2045',
+          progress: generateRandomAmount(8, 20),
+          currentAmount: generateRandomAmount(400000, 800000),
+          targetAmount: generateRandomAmount(4000000, 8000000),
+          targetDate: new Date(Date.now() + (20 + Math.random() * 10) * 365 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { 
+            month: 'long', 
+            year: 'numeric' 
+          }),
           onTrack: true
         },
         {
           title: 'Children\'s Education',
-          progress: 8,
-          currentAmount: 150000,
-          targetAmount: 2000000,
-          targetDate: 'June 2035',
-          onTrack: false
+          progress: generateRandomAmount(5, 15),
+          currentAmount: generateRandomAmount(100000, 300000),
+          targetAmount: generateRandomAmount(1500000, 2500000),
+          targetDate: new Date(Date.now() + (10 + Math.random() * 5) * 365 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { 
+            month: 'long', 
+            year: 'numeric' 
+          }),
+          onTrack: Math.random() > 0.3 // 70% chance of being on track
         }
       ]
     };

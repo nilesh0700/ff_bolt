@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ArrowLeft, Mail, Sparkles, Chrome, Zap, Shield, Users } from 'lucide-react';
 import Navbar from '@/components/Navbar';
+import { generateUserDefaults, generateUserId, generateAvatarUrl } from '@/lib/utils';
 
 interface AuthPageProps {
   onAuth: (userData: any) => void;
@@ -19,7 +20,7 @@ export default function AuthPage({ onAuth, onBack }: AuthPageProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [magicLinkSent, setMagicLinkSent] = useState(false);
 
-  // Demo credentials
+  // Demo credentials - now generated dynamically
   const demoCredentials = {
     email: 'demo@futureself.ai',
     name: 'Demo User'
@@ -29,11 +30,12 @@ export default function AuthPage({ onAuth, onBack }: AuthPageProps) {
     setIsLoading(true);
     // Simulate Google OAuth
     await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    // Generate dynamic user data instead of hardcoded values
+    const userData = generateUserDefaults('google.user@gmail.com');
     onAuth({
-      id: '1',
-      name: 'John Doe',
-      email: 'john@example.com',
-      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face'
+      ...userData,
+      name: 'Google User', // Override name for Google auth
     });
     setIsLoading(false);
   };
@@ -48,22 +50,27 @@ export default function AuthPage({ onAuth, onBack }: AuthPageProps) {
     
     // Auto-login after 3 seconds for demo
     setTimeout(() => {
-      onAuth({
-        id: '2',
-        name: email === demoCredentials.email ? demoCredentials.name : 'User',
-        email: email,
-        avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100&h=100&fit=crop&crop=face'
-      });
+      const userData = email === demoCredentials.email 
+        ? {
+            id: generateUserId(),
+            name: demoCredentials.name,
+            email: demoCredentials.email,
+            avatar: generateAvatarUrl(demoCredentials.name)
+          }
+        : generateUserDefaults(email);
+      
+      onAuth(userData);
     }, 3000);
   };
 
   const handleDemoLogin = () => {
-    onAuth({
-      id: 'demo',
+    const userData = {
+      id: generateUserId(),
       name: demoCredentials.name,
       email: demoCredentials.email,
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face'
-    });
+      avatar: generateAvatarUrl(demoCredentials.name)
+    };
+    onAuth(userData);
   };
 
   if (magicLinkSent) {
@@ -227,7 +234,7 @@ export default function AuthPage({ onAuth, onBack }: AuthPageProps) {
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        placeholder="Enter your email"
+                        placeholder="your.email@example.com"
                         className="h-12 border-2 border-gray-200 focus:border-[#725BF4] rounded-xl mt-1 transition-colors"
                       />
                     </div>
