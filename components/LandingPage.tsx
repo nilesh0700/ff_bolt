@@ -5,14 +5,38 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Sparkles, MessageCircle, TrendingUp, Shield, ArrowRight, Play, Star, Users, Zap, CheckCircle, Link, Settings, Rocket, Clock, CreditCard, UserCheck, Code, Database, Brain, Lightbulb, Target, Calendar, DollarSign, PieChart, BarChart3, TrendingDown } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import Navbar from '@/components/Navbar';
+import { useAuth } from '@/lib/auth';
 
-export default function LandingPage() {
+interface LandingPageProps {
+  onGetStarted?: () => void;
+  onLogin?: () => void;
+}
+
+export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
   const router = useRouter();
+  const auth = useAuth();
   const [activeDemo, setActiveDemo] = useState(0);
   const [activeTech, setActiveTech] = useState(0);
 
   const handleGetStarted = () => {
-    router.push('/auth');
+    if (onGetStarted) {
+      onGetStarted();
+    } else {
+      router.push('/auth');
+    }
+  };
+
+  const handleLogin = () => {
+    if (onLogin) {
+      onLogin();
+    } else {
+      router.push('/auth');
+    }
+  };
+
+  const handleProfile = () => {
+    router.push('/profile');
   };
 
   const demoScenarios = [
@@ -70,41 +94,19 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="sticky top-0 bg-white border-b border-gray-100 z-50">
-        <div className="container mx-auto px-6 py-6">
-          <nav className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-[#725BF4] rounded-xl flex items-center justify-center">
-                <img src="/ff_logo.png" alt="Future Self Logo" className="w-10 h-10 rounded-xl" />
-              </div>
-              <span className="text-2xl font-bold text-gray-900">
-                Future Self
-              </span>
-            </div>
-            <div className="hidden md:flex items-center space-x-8">
-              <a href="#features" className="text-gray-600 hover:text-gray-900 transition-colors font-medium">Features</a>
-              <a href="#how-it-works" className="text-gray-600 hover:text-gray-900 transition-colors font-medium">How it Works</a>
-              <a href="#testimonials" className="text-gray-600 hover:text-gray-900 transition-colors font-medium">Reviews</a>
-              <Button
-                onClick={handleGetStarted}
-                className="bg-[#725BF4] hover:bg-[#5d47d9] text-white font-semibold px-6 py-2 rounded-xl transition-all duration-200"
-              >
-                Get Started
-              </Button>
-            </div>
-          </nav>
-        </div>
-      </header>
+      <Navbar 
+        user={auth.user}
+        showNavLinks={true}
+        onLogin={handleLogin}
+        onSignup={handleGetStarted}
+        onLogout={auth.logout}
+        onProfile={handleProfile}
+      />
 
       {/* Hero Section */}
       <section className="mx-auto px-6 pt-20">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            {/* <div className="inline-flex items-center bg-gray-50 rounded-full px-6 py-3 mb-8 border border-gray-200">
-              <Star className="w-5 h-5 text-[#00A175] mr-2" />
-              <span className="text-sm font-medium text-gray-700">Trusted by 10,000+ users</span>
-            </div> */}
-
             <h1 className="text-6xl md:text-7xl font-bold mb-8 leading-tight text-gray-900">
               Talk to your{" "}
               <span className="text-[#725BF4] mt-2">
@@ -208,11 +210,6 @@ export default function LandingPage() {
         <div className="relative container mx-auto px-6">
           {/* Section Header */}
           <div className="text-center mb-20">
-            {/* <div className="inline-flex items-center space-x-2 bg-white/80 backdrop-blur-sm border border-gray-200/50 rounded-full px-6 py-3 mb-8 shadow-sm">
-              <div className="w-2 h-2 bg-[#00A175] rounded-full animate-pulse"></div>
-              <span className="text-sm font-medium text-gray-700">Powered by Advanced AI</span>
-            </div> */}
-            
             <h2 className="text-5xl md:text-6xl font-bold mb-6 text-gray-900 leading-tight">
               The Science Behind<br/>
               <span className="text-[#725BF4] mt-2">Future{" "}</span>Self
@@ -845,30 +842,6 @@ export default function LandingPage() {
                     
                     {/* Interactive Technology Showcase */}
                     <div className="mt-8 pt-6 border-t border-white/20">
-                      {/* <div className="text-center mb-4">
-                        <div className="text-white/80 text-sm font-medium mb-2">Powered by</div>
-                      </div> */}
-                      
-                      {/* Tech Feature Tabs */}
-                      {/* <div className="grid grid-cols-4 gap-2 mb-4">
-                        {techFeatures.map((tech, index) => {
-                          const IconComponent = tech.icon;
-                          return (
-                            <button
-                              key={index}
-                              onClick={() => setActiveTech(index)}
-                              className={`p-3 rounded-xl transition-all duration-300 ${
-                                activeTech === index
-                                  ? 'bg-white/20 border border-white/30'
-                                  : 'bg-white/10 hover:bg-white/15'
-                              }`}
-                            >
-                              <IconComponent className={`w-5 h-5 mx-auto ${tech.color}`} />
-                            </button>
-                          );
-                        })}
-                      </div> */}
-                      
                       {/* Active Tech Description */}
                       <div className="bg-white/10 rounded-xl p-4 border border-white/20">
                         <div className="text-center">

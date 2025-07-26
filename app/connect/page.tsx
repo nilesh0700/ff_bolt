@@ -1,39 +1,36 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import AccountConnection from '@/components/AccountConnection';
+import { useAuthGuard } from '@/lib/auth';
 
 export default function ConnectPage() {
   const router = useRouter();
-  const [connectedAccounts, setConnectedAccounts] = useState<string[]>([]);
-  const [user, setUser] = useState<any>(null);
-
-  useEffect(() => {
-    // Check if user is authenticated
-    const userData = localStorage.getItem('user');
-    if (!userData) {
-      router.push('/auth');
-      return;
-    }
-    setUser(JSON.parse(userData));
-  }, [router]);
+  const auth = useAuthGuard({ requireAuth: true });
+  const [connectedAccounts, setConnectedAccounts] = useState<string[]>(auth.connectedAccounts || []);
 
   const handleAccountConnect = (account: string) => {
-    setConnectedAccounts(prev => [...prev, account]);
+    const newAccounts = [...connectedAccounts, account];
+    setConnectedAccounts(newAccounts);
+    auth.updateConnectedAccounts(newAccounts);
   };
 
   const handleAccountDisconnect = (account: string) => {
-    setConnectedAccounts(prev => prev.filter(acc => acc !== account));
+    const newAccounts = connectedAccounts.filter(acc => acc !== account);
+    setConnectedAccounts(newAccounts);
+    auth.updateConnectedAccounts(newAccounts);
   };
 
   const handleContinue = () => {
-    // Store connected accounts
-    localStorage.setItem('connectedAccounts', JSON.stringify(connectedAccounts));
     router.push('/onboarding');
   };
 
-  if (!user) {
+  const handleBack = () => {
+    router.push('/auth');
+  };
+
+  if (auth.isLoading || !auth.user) {
     return <div className="min-h-screen bg-white flex items-center justify-center">
       <div className="text-gray-600">Loading...</div>
     </div>;
@@ -45,6 +42,7 @@ export default function ConnectPage() {
       onAccountConnect={handleAccountConnect}
       onAccountDisconnect={handleAccountDisconnect}
       onContinue={handleContinue}
+      onBack={handleBack}
     />
   );
 }

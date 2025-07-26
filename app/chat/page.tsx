@@ -1,40 +1,16 @@
 "use client";
 
-import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import ChatInterface from '@/components/ChatInterface';
+import { useAuthGuard } from '@/lib/auth';
 
 export default function ChatPage() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
-  const [userProfile, setUserProfile] = useState<any>(null);
-  const [connectedAccounts, setConnectedAccounts] = useState<string[]>([]);
-
-  useEffect(() => {
-    // Check authentication and data
-    const userData = localStorage.getItem('user');
-    const profileData = localStorage.getItem('userProfile');
-    const accountsData = localStorage.getItem('connectedAccounts');
-
-    if (!userData) {
-      router.push('/auth');
-      return;
-    }
-
-    if (!accountsData || JSON.parse(accountsData).length === 0) {
-      router.push('/connect');
-      return;
-    }
-
-    if (!profileData) {
-      router.push('/onboarding');
-      return;
-    }
-
-    setUser(JSON.parse(userData));
-    setUserProfile(JSON.parse(profileData));
-    setConnectedAccounts(JSON.parse(accountsData));
-  }, [router]);
+  const auth = useAuthGuard({ 
+    requireAuth: true, 
+    requireAccounts: true, 
+    requireProfile: true 
+  });
 
   const handleNavigate = (screen: string) => {
     switch (screen) {
@@ -55,7 +31,7 @@ export default function ChatPage() {
     }
   };
 
-  if (!user || !userProfile) {
+  if (auth.isLoading || !auth.user || !auth.userProfile) {
     return <div className="min-h-screen bg-white flex items-center justify-center">
       <div className="text-gray-600">Loading...</div>
     </div>;
@@ -63,9 +39,9 @@ export default function ChatPage() {
 
   return (
     <ChatInterface
-      user={user}
-      userProfile={userProfile}
-      connectedAccounts={connectedAccounts}
+      user={auth.user}
+      userProfile={auth.userProfile}
+      connectedAccounts={auth.connectedAccounts}
       onNavigate={handleNavigate}
     />
   );

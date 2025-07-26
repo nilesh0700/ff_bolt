@@ -1,14 +1,19 @@
 "use client";
 
-import AuthPage from '@/components/AuthPage';
 import { useRouter } from 'next/navigation';
+import AuthPage from '@/components/AuthPage';
+import { useAuth } from '@/lib/auth';
 
 export default function AuthPageRoute() {
   const router = useRouter();
+  const { updateUser } = useAuth();
 
   const handleAuth = (userData: any) => {
-    // Store user data in localStorage or context
-    localStorage.setItem('user', JSON.stringify(userData));
+    updateUser({
+      ...userData,
+      dateJoined: 'January 2024',
+      lastLogin: '2 hours ago'
+    });
     router.push('/connect');
   };
 

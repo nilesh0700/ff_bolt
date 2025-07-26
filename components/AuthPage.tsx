@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ArrowLeft, Mail, Sparkles, Chrome, Zap, Shield, Users } from 'lucide-react';
+import Navbar from '@/components/Navbar';
 
 interface AuthPageProps {
   onAuth: (userData: any) => void;
@@ -98,27 +99,8 @@ export default function AuthPage({ onAuth, onBack }: AuthPageProps) {
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      {/* Header */}
-      <header className="sticky top-0 bg-white border-b border-gray-100 z-50">
-        <div className="container mx-auto px-6 py-4">
-          <nav className="flex items-center justify-between">
-            <Button 
-              onClick={onBack}
-              variant="ghost"
-              className="text-gray-600 hover:text-gray-900 rounded-xl"
-            >
-              <ArrowLeft className="w-5 h-5 mr-2" />
-              Back to Home
-            </Button>
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-[#725BF4] rounded-xl flex items-center justify-center">
-                <img src="/ff_logo.png" alt="Future Self Logo" className="w-10 h-10 rounded-xl" />
-              </div>
-              <span className="text-2xl font-bold text-gray-900">Future Self</span>
-            </div>
-          </nav>
-        </div>
-      </header>
+      {/* Navbar */}
+      <Navbar />
 
       {/* Main Content */}
       <div className="flex-1 flex items-center justify-center p-6">
@@ -287,7 +269,7 @@ export default function AuthPage({ onAuth, onBack }: AuthPageProps) {
       </div>
 
       {/* Footer */}
-      {/* <footer className="bg-gray-50 border-t border-gray-200 py-8">
+      <footer className="bg-gray-50 border-t border-gray-200 py-8">
         <div className="container mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center space-x-3 mb-4 md:mb-0">
@@ -301,7 +283,7 @@ export default function AuthPage({ onAuth, onBack }: AuthPageProps) {
             </div>
           </div>
         </div>
-      </footer> */}
+      </footer>
     </div>
   );
 }

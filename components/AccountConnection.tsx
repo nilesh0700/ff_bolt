@@ -3,21 +3,24 @@
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { CheckCircle, ArrowRight, Shield, Banknote, TrendingUp, Sparkles, Star } from 'lucide-react';
+import { CheckCircle, ArrowRight, Shield, Banknote, TrendingUp, Sparkles, Star, ArrowLeft } from 'lucide-react';
 import { useState } from 'react';
+import Navbar from '@/components/Navbar';
 
 interface AccountConnectionProps {
   connectedAccounts: string[];
   onAccountConnect: (account: string) => void;
   onAccountDisconnect: (account: string) => void;
   onContinue: () => void;
+  onBack: () => void;
 }
 
 export default function AccountConnection({
   connectedAccounts,
   onAccountConnect,
   onAccountDisconnect,
-  onContinue
+  onContinue,
+  onBack
 }: AccountConnectionProps) {
   const [connecting, setConnecting] = useState<string | null>(null);
 
@@ -53,19 +56,11 @@ export default function AccountConnection({
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="border-b border-gray-100">
-        <div className="container mx-auto px-6 py-6">
-          <div className="flex items-center justify-center">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-[#725BF4] rounded-xl flex items-center justify-center">
-                <Sparkles className="w-6 h-6 text-white" />
-              </div>
-              <span className="text-2xl font-bold text-gray-900">Future Self</span>
-            </div>
-          </div>
-        </div>
-      </header>
+      {/* Navbar */}
+      <Navbar 
+        showBackButton={true}
+        onBack={onBack}
+      />
 
       <div className="container mx-auto px-6 py-20">
         <div className="max-w-4xl mx-auto">
