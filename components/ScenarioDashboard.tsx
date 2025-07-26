@@ -4,8 +4,9 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
-import { ArrowLeft, TrendingUp, TrendingDown, Home, Car, GraduationCap, Lock, RotateCcw, Sparkles } from 'lucide-react';
+import { ArrowLeft, Target, Sparkles, TrendingUp, Shield, DollarSign, Home, Car, GraduationCap, RefreshCw, Lock, Zap, CheckCircle, AlertCircle } from 'lucide-react';
 import { mockApi } from '@/lib/mockApi';
+import Navbar from '@/components/Navbar';
 
 interface ScenarioDashboardProps {
   userProfile: any;
@@ -36,7 +37,7 @@ export default function ScenarioDashboard({ userProfile, onNavigate }: ScenarioD
     switch (type) {
       case 'conservative': return TrendingUp;
       case 'balanced': return Home;
-      case 'aggressive': return TrendingDown;
+      case 'aggressive': return TrendingUp; // Changed from TrendingDown to TrendingUp for aggressive
       default: return Sparkles;
     }
   };
@@ -54,65 +55,30 @@ export default function ScenarioDashboard({ userProfile, onNavigate }: ScenarioD
   const yearData = selectedScenarioData.timeline.find(t => t.year === selectedYear) || selectedScenarioData.timeline[0];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
       {/* Header */}
-      <header className="border-b border-gray-100 sticky top-0 z-50 bg-white">
-        <div className="container mx-auto px-6 py-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Button 
-                onClick={() => onNavigate('chat')}
-                variant="ghost"
-                className="rounded-2xl"
-              >
-                <ArrowLeft className="w-5 h-5 mr-2" />
-                Back to Chat
-              </Button>
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-[#725BF4] rounded-xl flex items-center justify-center">
-                  <Sparkles className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold text-gray-900">Financial Scenarios</h1>
-                  <p className="text-sm text-gray-600">Compare different life paths and outcomes</p>
-                </div>
-              </div>
-            </div>
-            
-            <Button 
-              onClick={handleGenerateNewScenarios}
-              disabled={isGenerating}
-              className="bg-[#00A175] hover:bg-[#008a64] text-white font-semibold px-6 py-2 rounded-xl transition-all duration-200"
-            >
-              {isGenerating ? (
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
-              ) : (
-                <RotateCcw className="w-4 h-4 mr-2" />
-              )}
-              Re-run Scenarios
-            </Button>
-          </div>
-        </div>
-      </header>
+      <Navbar />
 
       <div className="container mx-auto px-6 py-20">
-        {/* Header Section */}
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center bg-gray-50 rounded-full px-6 py-3 mb-8 border border-gray-200">
-            <TrendingUp className="w-5 h-5 text-[#00A175] mr-2" />
-            <span className="text-sm font-medium text-gray-700">AI-Powered Projections</span>
+        {/* Page Header */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-12 space-y-4 lg:space-y-0">
+          <div>
+            <h1 className="text-4xl font-bold text-gray-900 mb-3">Financial Scenarios</h1>
+            <p className="text-xl text-gray-600">Compare different life paths and outcomes</p>
           </div>
           
-          <h1 className="text-5xl md:text-6xl font-bold mb-8 leading-tight text-gray-900">
-            Your Financial
-            <span className="block text-[#725BF4] mt-2">
-              Future Scenarios
-            </span>
-          </h1>
-          
-          <p className="text-xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
-            Explore different life paths and see how your financial decisions today impact your future wealth
-          </p>
+          <Button 
+            onClick={handleGenerateNewScenarios}
+            disabled={isGenerating}
+            className="bg-[#00A175] hover:bg-[#008a64] text-white font-semibold px-6 py-3 rounded-xl transition-all duration-200"
+          >
+            {isGenerating ? (
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+            ) : (
+              <RefreshCw className="w-4 h-4 mr-2" />
+            )}
+            Re-run Scenarios
+          </Button>
         </div>
 
         {/* Scenario Selection */}

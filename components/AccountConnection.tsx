@@ -57,10 +57,7 @@ export default function AccountConnection({
   return (
     <div className="min-h-screen bg-white">
       {/* Navbar */}
-      <Navbar 
-        showBackButton={true}
-        onBack={onBack}
-      />
+      <Navbar />
 
       <div className="container mx-auto px-6 py-20">
         <div className="max-w-4xl mx-auto">

@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Target, Zap, CheckCircle, TrendingUp, DollarSign, PiggyBank, CreditCard, Filter } from 'lucide-react';
 import { mockApi } from '@/lib/mockApi';
+import Navbar from '@/components/Navbar';
 
 interface ActionCenterProps {
   userProfile: any;
@@ -58,56 +59,43 @@ export default function ActionCenter({ userProfile, onNavigate }: ActionCenterPr
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-sm border-b border-slate-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Button 
-                onClick={() => onNavigate('chat')}
-                variant="ghost"
-                className="rounded-2xl"
-              >
-                <ArrowLeft className="w-5 h-5 mr-2" />
-                Back to Chat
-              </Button>
-              <div>
-                <h1 className="text-2xl font-bold text-slate-800">Action Center</h1>
-                <p className="text-sm text-slate-600">Turn insights into action with personalized recommendations</p>
-              </div>
-            </div>
-            
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center bg-white rounded-2xl border border-slate-200 p-1">
-                <Button
-                  onClick={() => setFilter('all')}
-                  variant={filter === 'all' ? 'default' : 'ghost'}
-                  className="rounded-xl text-sm"
-                >
-                  All
-                </Button>
-                <Button
-                  onClick={() => setFilter('high_impact')}
-                  variant={filter === 'high_impact' ? 'default' : 'ghost'}
-                  className="rounded-xl text-sm"
-                >
-                  <Zap className="w-4 h-4 mr-1" />
-                  High Impact
-                </Button>
-                <Button
-                  onClick={() => setFilter('low_effort')}
-                  variant={filter === 'low_effort' ? 'default' : 'ghost'}
-                  className="rounded-xl text-sm"
-                >
-                  <Filter className="w-4 h-4 mr-1" />
-                  Low Effort
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Navbar />
 
       <div className="max-w-6xl mx-auto p-6">
+        {/* Page Header and Filters */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-8 space-y-4 lg:space-y-0">
+          <div>
+            <h1 className="text-3xl font-bold text-slate-800 mb-2">Action Center</h1>
+            <p className="text-slate-600">Turn insights into action with personalized recommendations</p>
+          </div>
+          
+          <div className="flex items-center bg-white rounded-2xl border border-slate-200 p-1 shadow-sm">
+            <Button
+              onClick={() => setFilter('all')}
+              variant={filter === 'all' ? 'default' : 'ghost'}
+              className="rounded-xl text-sm"
+            >
+              All
+            </Button>
+            <Button
+              onClick={() => setFilter('high_impact')}
+              variant={filter === 'high_impact' ? 'default' : 'ghost'}
+              className="rounded-xl text-sm"
+            >
+              <Zap className="w-4 h-4 mr-1" />
+              High Impact
+            </Button>
+            <Button
+              onClick={() => setFilter('low_effort')}
+              variant={filter === 'low_effort' ? 'default' : 'ghost'}
+              className="rounded-xl text-sm"
+            >
+              <Filter className="w-4 h-4 mr-1" />
+              Low Effort
+            </Button>
+          </div>
+        </div>
+
         {/* Stats Overview */}
         <div className="grid md:grid-cols-4 gap-6 mb-8">
           <Card className="glass-effect border-0 rounded-3xl">

@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { ArrowLeft, Edit, Save, X, Camera, Shield, Link, Trash2, Eye, EyeOff } from 'lucide-react';
+import { ArrowLeft, User, Edit3, Save, X, Trash2, Sparkles, Shield, Calendar, Clock } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 
 interface User {
@@ -79,14 +79,9 @@ export default function ProfilePage({
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Navbar */}
-      <Navbar 
-        user={user}
-        showBackButton={true}
-        onBack={onBack}
-        onLogout={onLogout}
-      />
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50">
+      {/* Header */}
+      <Navbar />
 
       <div className="container mx-auto px-6 py-20">
         <div className="max-w-4xl mx-auto">
@@ -119,7 +114,7 @@ export default function ProfilePage({
                       variant="outline" 
                       className="absolute bottom-0 right-1/2 transform translate-x-1/2 translate-y-2 w-10 h-10 rounded-full border-2 border-white bg-white shadow-lg"
                     >
-                      <Camera className="w-4 h-4" />
+                      <User className="w-4 h-4" />
                     </Button>
                   </div>
                   
@@ -138,7 +133,7 @@ export default function ProfilePage({
                       onClick={() => setIsEditing(!isEditing)}
                       className="w-full bg-[#725BF4] hover:bg-[#5d47d9] text-white rounded-xl"
                     >
-                      <Edit className="w-4 h-4 mr-2" />
+                      <Edit3 className="w-4 h-4 mr-2" />
                       Edit Profile
                     </Button>
                     
@@ -244,7 +239,7 @@ export default function ProfilePage({
               <Card className="card-modern">
                 <CardHeader>
                   <CardTitle className="text-2xl font-bold text-gray-900 flex items-center">
-                    <Link className="w-6 h-6 mr-3 text-[#00A175]" />
+                    <Sparkles className="w-6 h-6 mr-3 text-[#00A175]" />
                     Connected Accounts
                   </CardTitle>
                   <CardDescription className="text-lg text-gray-600">
@@ -283,7 +278,7 @@ export default function ProfilePage({
                     </div>
                   ) : (
                     <div className="text-center py-12">
-                      <Link className="w-16 h-16 mx-auto mb-6 text-gray-400" />
+                      <Sparkles className="w-16 h-16 mx-auto mb-6 text-gray-400" />
                       <h3 className="text-2xl font-bold text-gray-600 mb-4">No Connected Accounts</h3>
                       <p className="text-gray-500 mb-6">Connect your financial accounts to get personalized insights.</p>
                       <Button className="bg-[#725BF4] hover:bg-[#5d47d9] text-white rounded-xl">
@@ -316,7 +311,7 @@ export default function ProfilePage({
                       variant="outline"
                       className="border-2 border-gray-300 rounded-xl"
                     >
-                      {showPersonalData ? <EyeOff className="w-4 h-4 mr-2" /> : <Eye className="w-4 h-4 mr-2" />}
+                      {showPersonalData ? <Calendar className="w-4 h-4 mr-2" /> : <Clock className="w-4 h-4 mr-2" />}
                       {showPersonalData ? 'Hide' : 'View'} Data
                     </Button>
                   </div>

@@ -94,14 +94,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <Navbar 
-        user={auth.user}
-        showNavLinks={true}
-        onLogin={handleLogin}
-        onSignup={handleGetStarted}
-        onLogout={auth.logout}
-        onProfile={handleProfile}
-      />
+      <Navbar />
 
       {/* Hero Section */}
       <section className="mx-auto px-6 pt-20">

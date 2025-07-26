@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Send, Mic, MicOff, BarChart3, Target, TrendingUp, Menu, User, Bot, Sparkles } from 'lucide-react';
 import Avatar from '@/components/Avatar';
 import { mockApi } from '@/lib/mockApi';
+import Navbar from '@/components/Navbar';
 
 interface Message {
   id: string;
@@ -135,55 +136,7 @@ export default function ChatInterface({ user, userProfile, connectedAccounts, on
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="border-b border-gray-100 sticky top-0 z-50 bg-white">
-        <div className="container mx-auto px-6 py-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Button 
-                onClick={() => onNavigate('landing')}
-                variant="ghost"
-                className="lg:hidden rounded-xl"
-              >
-                <Menu className="w-5 h-5" />
-              </Button>
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-[#725BF4] rounded-xl flex items-center justify-center">
-                  <Sparkles className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold text-gray-900">Future Self Chat</h1>
-                  <p className="text-sm text-gray-600">Talking with your {userProfile.futureAge}-year-old self</p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex items-center space-x-4">
-              <Button 
-                onClick={() => onNavigate('scenarios')}
-                className="hidden md:flex items-center space-x-2 bg-[#725BF4] hover:bg-[#5d47d9] text-white font-semibold px-6 py-2 rounded-xl transition-all duration-200"
-              >
-                <BarChart3 className="w-4 h-4" />
-                <span>Scenarios</span>
-              </Button>
-              <Button 
-                onClick={() => onNavigate('actions')}
-                className="hidden md:flex items-center space-x-2 bg-[#00A175] hover:bg-[#008a64] text-white font-semibold px-6 py-2 rounded-xl transition-all duration-200"
-              >
-                <Target className="w-4 h-4" />
-                <span>Actions</span>
-              </Button>
-              <Button 
-                onClick={() => onNavigate('progress')}
-                variant="outline"
-                className="hidden md:flex items-center space-x-2 border-2 border-gray-300 text-gray-700 hover:bg-gray-50 font-semibold px-6 py-2 rounded-xl transition-all duration-200"
-              >
-                <TrendingUp className="w-4 h-4" />
-                <span>Progress</span>
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Navbar />
 
       {/* Chat Messages */}
       <div className="container mx-auto px-6 py-8">

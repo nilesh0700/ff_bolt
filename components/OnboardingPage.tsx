@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Slider } from '@/components/ui/slider';
 import { ArrowLeft, ArrowRight, Target, Users, Zap, Heart, Home, GraduationCap, Briefcase, Plane, Shield, Sparkles } from 'lucide-react';
 import Avatar from '@/components/Avatar';
+import Navbar from '@/components/Navbar';
 
 interface OnboardingPageProps {
   userProfile: any;
@@ -172,24 +173,17 @@ export default function OnboardingPage({ userProfile, onProfileUpdate, onComplet
     }
   };
 
+  const handleBack = () => {
+    onBack();
+  };
+
   const currentStepData = steps[currentStep];
   const IconComponent = currentStepData.icon;
 
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="border-b border-gray-100">
-        <div className="container mx-auto px-6 py-6">
-          <div className="flex items-center justify-center">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-[#725BF4] rounded-xl flex items-center justify-center">
-                <Sparkles className="w-6 h-6 text-white" />
-              </div>
-              <span className="text-2xl font-bold text-gray-900">Future Self</span>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Navbar />
 
       <div className="container mx-auto px-6 py-20">
         <div className="max-w-6xl mx-auto">

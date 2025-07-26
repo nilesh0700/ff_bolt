@@ -4,8 +4,9 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { ArrowLeft, TrendingUp, Target, Award, Calendar, Sparkles, Trophy, Star, CheckCircle } from 'lucide-react';
+import { ArrowLeft, TrendingUp, DollarSign, Target, Calendar, Trophy, Sparkles, CheckCircle, AlertCircle, TrendingDown, Star, Award } from 'lucide-react';
 import { mockApi } from '@/lib/mockApi';
+import Navbar from '@/components/Navbar';
 
 interface ProgressTrackerProps {
   userProfile: any;
@@ -28,71 +29,54 @@ export default function ProgressTracker({ userProfile, onNavigate }: ProgressTra
   const currentData = getPeriodData();
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50">
       {/* Header */}
-      <header className="border-b border-gray-100 sticky top-0 z-50 bg-white">
-        <div className="container mx-auto px-6 py-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Button 
-                onClick={() => onNavigate('chat')}
-                variant="ghost"
-                className="rounded-2xl"
-              >
-                <ArrowLeft className="w-5 h-5 mr-2" />
-                Back to Chat
-              </Button>
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-[#725BF4] rounded-xl flex items-center justify-center">
-                  <Sparkles className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-bold text-gray-900">Progress Tracker</h1>
-                  <p className="text-sm text-gray-600">Monitor your financial journey and celebrate milestones</p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex items-center bg-gray-50 rounded-2xl border border-gray-200 p-1">
-              <Button
-                onClick={() => setSelectedPeriod('month')}
-                variant={selectedPeriod === 'month' ? 'default' : 'ghost'}
-                className={`rounded-xl text-sm font-semibold ${
-                  selectedPeriod === 'month' 
-                    ? 'bg-[#725BF4] hover:bg-[#5d47d9] text-white' 
-                    : 'text-gray-600 hover:text-gray-900'
-                }`}
-              >
-                Monthly
-              </Button>
-              <Button
-                onClick={() => setSelectedPeriod('quarter')}
-                variant={selectedPeriod === 'quarter' ? 'default' : 'ghost'}
-                className={`rounded-xl text-sm font-semibold ${
-                  selectedPeriod === 'quarter' 
-                    ? 'bg-[#725BF4] hover:bg-[#5d47d9] text-white' 
-                    : 'text-gray-600 hover:text-gray-900'
-                }`}
-              >
-                Quarterly
-              </Button>
-              <Button
-                onClick={() => setSelectedPeriod('year')}
-                variant={selectedPeriod === 'year' ? 'default' : 'ghost'}
-                className={`rounded-xl text-sm font-semibold ${
-                  selectedPeriod === 'year' 
-                    ? 'bg-[#725BF4] hover:bg-[#5d47d9] text-white' 
-                    : 'text-gray-600 hover:text-gray-900'
-                }`}
-              >
-                Yearly
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Navbar />
 
       <div className="container mx-auto px-6 py-20">
+        {/* Page Header and Period Selector */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-12 space-y-4 lg:space-y-0">
+          <div>
+            <h1 className="text-4xl font-bold text-gray-900 mb-3">Progress Tracker</h1>
+            <p className="text-xl text-gray-600">Monitor your financial journey and celebrate milestones</p>
+          </div>
+          
+          <div className="flex items-center bg-white rounded-2xl border border-gray-200 p-1 shadow-sm">
+            <Button
+              onClick={() => setSelectedPeriod('month')}
+              variant={selectedPeriod === 'month' ? 'default' : 'ghost'}
+              className={`rounded-xl text-sm font-semibold ${
+                selectedPeriod === 'month' 
+                  ? 'bg-[#725BF4] hover:bg-[#5d47d9] text-white' 
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Monthly
+            </Button>
+            <Button
+              onClick={() => setSelectedPeriod('quarter')}
+              variant={selectedPeriod === 'quarter' ? 'default' : 'ghost'}
+              className={`rounded-xl text-sm font-semibold ${
+                selectedPeriod === 'quarter' 
+                  ? 'bg-[#725BF4] hover:bg-[#5d47d9] text-white' 
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Quarterly
+            </Button>
+            <Button
+              onClick={() => setSelectedPeriod('year')}
+              variant={selectedPeriod === 'year' ? 'default' : 'ghost'}
+              className={`rounded-xl text-sm font-semibold ${
+                selectedPeriod === 'year' 
+                  ? 'bg-[#725BF4] hover:bg-[#5d47d9] text-white' 
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Yearly
+            </Button>
+          </div>
+        </div>
         {/* Financial Health Meter */}
         <Card className="card-modern mb-16">
           <CardHeader className="text-center pb-8">
