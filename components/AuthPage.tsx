@@ -97,10 +97,10 @@ export default function AuthPage({ onAuth, onBack }: AuthPageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white flex flex-col">
       {/* Header */}
-      <header className="border-b border-gray-100">
-        <div className="container mx-auto px-6 py-6">
+      <header className="sticky top-0 bg-white border-b border-gray-100 z-50">
+        <div className="container mx-auto px-6 py-4">
           <nav className="flex items-center justify-between">
             <Button 
               onClick={onBack}
@@ -112,7 +112,7 @@ export default function AuthPage({ onAuth, onBack }: AuthPageProps) {
             </Button>
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-[#725BF4] rounded-xl flex items-center justify-center">
-                <Sparkles className="w-6 h-6 text-white" />
+                <img src="/ff_logo.png" alt="Future Self Logo" className="w-10 h-10 rounded-xl" />
               </div>
               <span className="text-2xl font-bold text-gray-900">Future Self</span>
             </div>
@@ -120,81 +120,84 @@ export default function AuthPage({ onAuth, onBack }: AuthPageProps) {
         </div>
       </header>
 
-      <div className="container mx-auto px-6 py-20">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
+      {/* Main Content */}
+      <div className="flex-1 flex items-center justify-center p-6">
+        <div className="w-full max-w-6xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left side - Benefits */}
-            <div>
-              <h1 className="text-5xl font-bold mb-6 leading-tight text-gray-900">
-                Welcome to your
-                <span className="block text-[#725BF4] mt-2">
-                  Financial Future
-                </span>
-              </h1>
-              <p className="text-xl text-gray-600 mb-12 leading-relaxed">
-                Join thousands of users who are building wealth with AI-powered guidance from their future selves.
-              </p>
+            <div className="space-y-8">
+              <div>
+                <h1 className="text-4xl lg:text-5xl font-bold mb-4 leading-tight text-gray-900">
+                  Welcome to your
+                  <span className="block text-[#725BF4] mt-1">
+                    Financial Future
+                  </span>
+                </h1>
+                <p className="text-lg text-gray-600 leading-relaxed">
+                  Join thousands of users who are building wealth with AI-powered guidance from their future selves.
+                </p>
+              </div>
               
-              <div className="space-y-8">
+              <div className="space-y-6">
                 <div className="flex items-center space-x-4">
-                  <div className="w-16 h-16 bg-[#00A175] rounded-2xl flex items-center justify-center flex-shrink-0">
-                    <Shield className="w-8 h-8 text-white" />
+                  <div className="w-12 h-12 bg-[#00A175] rounded-xl flex items-center justify-center flex-shrink-0">
+                    <Shield className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-1">Bank-level Security</h3>
-                    <p className="text-gray-600">Your data is encrypted and protected with industry-leading security</p>
+                    <h3 className="text-lg font-bold text-gray-900 mb-1">Bank-level Security</h3>
+                    <p className="text-gray-600 text-sm">Your data is encrypted and protected with industry-leading security</p>
                   </div>
                 </div>
                 
                 <div className="flex items-center space-x-4">
-                  <div className="w-16 h-16 bg-[#725BF4] rounded-2xl flex items-center justify-center flex-shrink-0">
-                    <Zap className="w-8 h-8 text-white" />
+                  <div className="w-12 h-12 bg-[#725BF4] rounded-xl flex items-center justify-center flex-shrink-0">
+                    <Zap className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-1">Instant Setup</h3>
-                    <p className="text-gray-600">Get started in under 2 minutes with our streamlined process</p>
+                    <h3 className="text-lg font-bold text-gray-900 mb-1">Instant Setup</h3>
+                    <p className="text-gray-600 text-sm">Get started in under 2 minutes with our streamlined process</p>
                   </div>
                 </div>
                 
                 <div className="flex items-center space-x-4">
-                  <div className="w-16 h-16 bg-gray-700 rounded-2xl flex items-center justify-center flex-shrink-0">
-                    <Users className="w-8 h-8 text-white" />
+                  <div className="w-12 h-12 bg-gray-700 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <Users className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-1">10,000+ Happy Users</h3>
-                    <p className="text-gray-600">Join our growing community of financially empowered individuals</p>
+                    <h3 className="text-lg font-bold text-gray-900 mb-1">10,000+ Happy Users</h3>
+                    <p className="text-gray-600 text-sm">Join our growing community of financially empowered individuals</p>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Right side - Auth Form */}
-            <div>
+            <div className="w-full max-w-md mx-auto lg:mx-0">
               <Card className="border border-gray-200 rounded-2xl shadow-lg">
-                <CardHeader className="text-center pb-6">
-                  <CardTitle className="text-3xl font-bold text-gray-900 mb-2">
+                <CardHeader className="text-center pb-4">
+                  <CardTitle className="text-2xl font-bold text-gray-900 mb-2">
                     {isLogin ? 'Welcome Back!' : 'Create Account'}
                   </CardTitle>
-                  <CardDescription className="text-gray-600 text-lg">
+                  <CardDescription className="text-gray-600">
                     {isLogin ? 'Sign in to continue your financial journey' : 'Start building your financial future today'}
                   </CardDescription>
                 </CardHeader>
 
-                <CardContent className="p-8 space-y-6">
+                <CardContent className="p-6 space-y-4">
                   {/* Demo Login Banner */}
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-6 text-center">
-                    <p className="text-yellow-800 text-sm mb-4 flex items-center justify-center">
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 text-center">
+                    <p className="text-yellow-800 text-sm mb-3 flex items-center justify-center">
                       <Sparkles className="w-4 h-4 mr-2" />
-                      Try the demo with these credentials:
+                      Try the demo:
                     </p>
-                    <div className="bg-white border border-yellow-200 rounded-xl p-4 mb-4">
-                      <p className="text-gray-700 font-mono text-sm">
-                        Email: {demoCredentials.email}
+                    <div className="bg-white border border-yellow-200 rounded-lg p-3 mb-3">
+                      <p className="text-gray-700 font-mono text-xs">
+                        {demoCredentials.email}
                       </p>
                     </div>
                     <Button 
                       onClick={handleDemoLogin}
-                      className="bg-[#725BF4] hover:bg-[#5d47d9] text-white font-semibold w-full rounded-xl transition-all duration-200"
+                      className="bg-[#725BF4] hover:bg-[#5d47d9] text-white font-semibold w-full rounded-xl transition-all duration-200 h-10"
                     >
                       <Zap className="w-4 h-4 mr-2" />
                       Quick Demo Login
@@ -214,7 +217,7 @@ export default function AuthPage({ onAuth, onBack }: AuthPageProps) {
                   <Button 
                     onClick={handleGoogleAuth}
                     disabled={isLoading}
-                    className="w-full h-14 bg-white hover:bg-gray-50 text-gray-900 border-2 border-gray-200 hover:border-gray-300 rounded-xl font-semibold text-base transition-all duration-200 shadow-sm hover:shadow-md"
+                    className="w-full h-12 bg-white hover:bg-gray-50 text-gray-900 border-2 border-gray-200 hover:border-gray-300 rounded-xl font-semibold transition-all duration-200 shadow-sm hover:shadow-md"
                   >
                     {isLoading ? (
                       <div className="w-5 h-5 border-2 border-gray-400 border-t-transparent rounded-full animate-spin mr-3" />
@@ -234,16 +237,16 @@ export default function AuthPage({ onAuth, onBack }: AuthPageProps) {
                   </div>
 
                   {/* Magic Link */}
-                  <div className="space-y-4">
+                  <div className="space-y-3">
                     <div>
-                      <Label htmlFor="email" className="text-gray-700 font-medium">Email address</Label>
+                      <Label htmlFor="email" className="text-gray-700 font-medium text-sm">Email address</Label>
                       <Input
                         id="email"
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="Enter your email"
-                        className="h-12 border-2 border-gray-200 focus:border-[#725BF4] rounded-xl mt-2 transition-colors"
+                        className="h-12 border-2 border-gray-200 focus:border-[#725BF4] rounded-xl mt-1 transition-colors"
                       />
                     </div>
                     
@@ -275,7 +278,6 @@ export default function AuthPage({ onAuth, onBack }: AuthPageProps) {
                     <a href="#" className="text-[#725BF4] hover:underline">Terms of Service</a>
                     {' '}and{' '}
                     <a href="#" className="text-[#725BF4] hover:underline">Privacy Policy</a>.
-                    Your financial data is encrypted and secure.
                   </p>
                 </CardContent>
               </Card>
@@ -285,7 +287,7 @@ export default function AuthPage({ onAuth, onBack }: AuthPageProps) {
       </div>
 
       {/* Footer */}
-      <footer className="bg-gray-50 border-t border-gray-200 py-12">
+      {/* <footer className="bg-gray-50 border-t border-gray-200 py-8">
         <div className="container mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center space-x-3 mb-4 md:mb-0">
@@ -299,7 +301,7 @@ export default function AuthPage({ onAuth, onBack }: AuthPageProps) {
             </div>
           </div>
         </div>
-      </footer>
+      </footer> */}
     </div>
   );
 }
