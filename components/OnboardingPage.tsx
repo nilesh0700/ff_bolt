@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
-import { ArrowLeft, ArrowRight, Target, Users, Zap, Heart, Home, GraduationCap, Briefcase, Plane, Shield, Sparkles } from 'lucide-react';
+import { ArrowRight, Target, Users, Heart, Home, GraduationCap, Briefcase, Plane, Shield, Sparkles, CheckCircle, ArrowLeft, Zap } from 'lucide-react';
 import Avatar from '@/components/Avatar';
 import Navbar from '@/components/Navbar';
 
@@ -21,141 +21,182 @@ export default function OnboardingPage({ userProfile, onProfileUpdate, onComplet
   const steps = [
     {
       title: "Choose Your Future Age",
-      description: "Select the age you'd like to have conversations with",
-      icon: Target,
-      component: (
-        <div className="space-y-8">
-          <div className="text-center">
-            <div className="text-6xl font-bold bg-gradient-to-r from-[#725BF4] to-[#5d47d9] bg-clip-text text-transparent mb-4">
-              {userProfile.futureAge}
-            </div>
-            <p className="text-gray-600">Your future self's age</p>
-          </div>
-          <div className="px-6">
-            <Slider
-              value={[userProfile.futureAge]}
-              onValueChange={(value) => onProfileUpdate({ futureAge: value[0] })}
-              max={80}
-              min={userProfile.age + 5}
-              step={5}
-              className="w-full"
-            />
-            <div className="flex justify-between text-sm text-gray-500 mt-2">
-              <span>{userProfile.age + 5}</span>
-              <span>80</span>
-            </div>
-          </div>
-        </div>
-      )
+      subtitle: "Select the age you'd like to have conversations with"
     },
     {
-      title: "What's Your Personality?",
-      description: "This helps us tailor advice to your risk tolerance",
-      icon: Users,
-      component: (
-        <div className="space-y-6">
-          <div className="grid gap-4">
+      title: "Define Your Risk Personality", 
+      subtitle: "This helps us tailor advice to your comfort level"
+    },
+    {
+      title: "Set Your Life Goals",
+      subtitle: "Choose what matters most to you"
+    }
+  ];
+
+  const renderStepContent = () => {
+    switch (currentStep) {
+      case 0:
+        return (
+          <div className="space-y-8">
+            <div className="text-center">
+              <div className="text-6xl md:text-7xl font-bold bg-gradient-to-r from-[#725BF4] to-[#5d47d9] bg-clip-text text-transparent mb-4">
+                {userProfile.futureAge}
+              </div>
+              <p className="text-lg text-gray-600 font-medium">Your future self&apos;s age</p>
+            </div>
+            
+            <div className="max-w-md mx-auto">
+              <div className="bg-gray-50 rounded-2xl p-6 border border-gray-200">
+                <Slider
+                  value={[userProfile.futureAge]}
+                  onValueChange={(value) => onProfileUpdate({ futureAge: value[0] })}
+                  max={80}
+                  min={userProfile.age + 5}
+                  step={5}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-sm font-semibold text-gray-700 mt-4">
+                  <span>{userProfile.age + 5}</span>
+                  <span>80</span>
+                </div>
+              </div>
+            </div>
+
+            {/* <div className="grid grid-cols-3 gap-4 max-w-lg mx-auto">
+              <div className="text-center p-4 bg-gray-50 rounded-xl border border-gray-200">
+                <Zap className="w-6 h-6 text-[#725BF4] mx-auto mb-2" />
+                <p className="text-xs font-medium text-gray-700">Early Career</p>
+              </div>
+              <div className="text-center p-4 bg-gray-50 rounded-xl border border-gray-200">
+                <Target className="w-6 h-6 text-[#00A175] mx-auto mb-2" />
+                <p className="text-xs font-medium text-gray-700">Prime Years</p>
+              </div>
+              <div className="text-center p-4 bg-gray-50 rounded-xl border border-gray-200">
+                <Heart className="w-6 h-6 text-gray-700 mx-auto mb-2" />
+                <p className="text-xs font-medium text-gray-700">Wisdom Years</p>
+              </div>
+            </div> */}
+          </div>
+        );
+
+      case 1:
+        return (
+          <div className="space-y-4 max-w-2xl mx-auto">
             {[
               { 
                 value: 'conservative', 
                 label: 'Conservative', 
-                desc: 'I prefer safe, steady growth over high returns',
-                color: 'from-[#00A175] to-[#008a64]',
-                bgColor: 'from-[#00A175]/10 to-[#008a64]/10'
+                desc: 'Safe, steady growth. Security first.',
+                emoji: '🛡️',
+                color: 'bg-[#00A175]'
               },
               { 
                 value: 'balanced', 
                 label: 'Balanced', 
-                desc: 'I want a mix of safety and growth opportunities',
-                color: 'from-[#725BF4] to-[#5d47d9]',
-                bgColor: 'from-[#725BF4]/10 to-[#5d47d9]/10'
+                desc: 'Mix of safety and growth opportunities.',
+                emoji: '⚖️',
+                color: 'bg-[#725BF4]'
               },
               { 
                 value: 'aggressive', 
                 label: 'Aggressive', 
-                desc: 'I am comfortable with higher risk for better returns',
-                color: 'from-gray-600 to-gray-700',
-                bgColor: 'from-gray-100 to-gray-200'
+                desc: 'Higher risk for potentially better returns.',
+                emoji: '🚀',
+                color: 'bg-gray-700'
               }
             ].map((option) => (
-              <Button
+              <Card
                 key={option.value}
-                variant={userProfile.personality === option.value ? "default" : "outline"}
-                onClick={() => onProfileUpdate({ personality: option.value })}
-                className={`h-auto p-6 text-left justify-start rounded-2xl border-2 transition-all duration-300 hover:scale-105 ${
+                className={`cursor-pointer transition-all duration-300 border-2 hover:shadow-lg hover:-translate-y-1 ${
                   userProfile.personality === option.value 
-                    ? `bg-gradient-to-r ${option.color} text-white border-transparent shadow-lg` 
-                    : `bg-gradient-to-r ${option.bgColor} hover:shadow-lg border-gray-200 hover:border-gray-300`
+                    ? `border-transparent shadow-lg ${option.color} text-white` 
+                    : 'border-gray-200 hover:border-gray-300 bg-white'
                 }`}
+                onClick={() => onProfileUpdate({ personality: option.value })}
               >
-                <div className="w-full">
-                  <div className="font-bold text-lg mb-2">{option.label}</div>
-                  <div className={`text-sm opacity-90 leading-relaxed ${
-                    userProfile.personality === option.value ? 'text-white' : 'text-gray-600'
-                  }`}>
-                    {option.desc}
+                <CardContent className="p-6">
+                  <div className="flex items-center space-x-4">
+                    <div className="text-3xl">{option.emoji}</div>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-bold mb-1">{option.label}</h3>
+                      <p className={`text-sm leading-relaxed ${
+                        userProfile.personality === option.value ? 'text-white/90' : 'text-gray-600'
+                      }`}>
+                        {option.desc}
+                      </p>
+                    </div>
+                    {userProfile.personality === option.value && (
+                      <CheckCircle className="w-6 h-6 text-white" />
+                    )}
                   </div>
-                </div>
-              </Button>
+                </CardContent>
+              </Card>
             ))}
           </div>
-        </div>
-      )
-    },
-    {
-      title: "Select Your Life Goals",
-      description: "Choose what matters most to you (select multiple)",
-      icon: Heart,
-      component: (
-        <div className="space-y-6">
-          <div className="grid gap-4 md:grid-cols-2">
-            {[
-              { id: 'retirement', label: 'Comfortable Retirement', icon: Heart, color: 'from-[#725BF4] to-[#5d47d9]' },
-              { id: 'house', label: 'Buy Dream Home', icon: Home, color: 'from-[#00A175] to-[#008a64]' },
-              { id: 'education', label: "Children's Education", icon: GraduationCap, color: 'from-blue-500 to-blue-600' },
-              { id: 'business', label: 'Start a Business', icon: Briefcase, color: 'from-orange-500 to-red-600' },
-              { id: 'travel', label: 'Travel the World', icon: Plane, color: 'from-pink-500 to-rose-600' },
-              { id: 'emergency', label: 'Emergency Fund', icon: Shield, color: 'from-emerald-500 to-green-600' }
-            ].map((goal) => {
-              const IconComponent = goal.icon;
-              const isSelected = userProfile.goals.includes(goal.id);
-              
-              return (
-                <Button
-                  key={goal.id}
-                  variant={isSelected ? "default" : "outline"}
-                  onClick={() => {
-                    const newGoals = isSelected 
-                      ? userProfile.goals.filter((g: string) => g !== goal.id)
-                      : [...userProfile.goals, goal.id];
-                    onProfileUpdate({ goals: newGoals });
-                  }}
-                  className={`h-auto p-6 text-left justify-start rounded-2xl border-2 transition-all duration-300 hover:scale-105 ${
-                    isSelected
-                      ? `bg-gradient-to-r ${goal.color} text-white border-transparent shadow-lg` 
-                      : 'bg-white hover:shadow-lg border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <div className="flex items-center space-x-4 w-full">
-                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${
-                      isSelected ? 'bg-white/20' : `bg-gradient-to-r ${goal.color}`
-                    }`}>
-                      <IconComponent className={`w-6 h-6 ${
-                        isSelected ? 'text-white' : 'text-white'
-                      }`} />
-                    </div>
-                    <div>
-                      <div className="font-semibold text-base">{goal.label}</div>
-                    </div>
-                  </div>
-                </Button>
-              );
-            })}
+        );
+
+      case 2:
+        return (
+          <div className="space-y-6 max-w-3xl mx-auto">
+            <div className="text-center">
+              <p className="text-gray-600">Select multiple goals that matter to you</p>
+            </div>
+            
+            <div className="grid gap-4 grid-cols-2 md:grid-cols-3">
+              {[
+                { id: 'retirement', label: 'Retirement', color: 'bg-[#725BF4]', emoji: '🏖️' },
+                { id: 'house', label: 'Dream Home', color: 'bg-[#00A175]', emoji: '🏡' },
+                { id: 'education', label: "Children&apos;s Education", color: 'bg-gray-700', emoji: '🎓' },
+                { id: 'business', label: 'Business', color: 'bg-[#725BF4]', emoji: '💼' },
+                { id: 'travel', label: 'Travel', color: 'bg-[#00A175]', emoji: '✈️' },
+                { id: 'emergency', label: 'Emergency Fund', color: 'bg-gray-700', emoji: '🛡️' }
+              ].map((goal) => {
+                const isSelected = userProfile.goals.includes(goal.id);
+                
+                return (
+                  <Card
+                    key={goal.id}
+                    className={`cursor-pointer transition-all duration-300 border-2 hover:shadow-lg hover:-translate-y-1 ${
+                      isSelected
+                        ? `border-transparent shadow-lg ${goal.color} text-white` 
+                        : 'border-gray-200 hover:border-gray-300 bg-white'
+                    }`}
+                    onClick={() => {
+                      const newGoals = isSelected 
+                        ? userProfile.goals.filter((g: string) => g !== goal.id)
+                        : [...userProfile.goals, goal.id];
+                      onProfileUpdate({ goals: newGoals });
+                    }}
+                  >
+                    <CardContent className="p-4 text-center">
+                      <div className="text-2xl mb-2">{goal.emoji}</div>
+                      <h3 className="text-sm font-bold">{goal.label}</h3>
+                      {isSelected && (
+                        <CheckCircle className="w-4 h-4 mx-auto mt-2 text-white" />
+                      )}
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+
+            {userProfile.goals.length > 0 && (
+              <div className="text-center">
+                <div className="inline-flex items-center bg-green-50 rounded-full px-4 py-2 border border-green-200">
+                  <CheckCircle className="w-4 h-4 text-green-600 mr-2" />
+                  <span className="text-green-700 font-medium text-sm">
+                    {userProfile.goals.length} goal{userProfile.goals.length === 1 ? "" : "s"} selected
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
-        </div>
-      )
+        );
+
+      default:
+        return null;
     }
-  ];
+  };
 
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
@@ -173,35 +214,85 @@ export default function OnboardingPage({ userProfile, onProfileUpdate, onComplet
     }
   };
 
-  const handleBack = () => {
-    onBack();
+  const isStepValid = () => {
+    switch (currentStep) {
+      case 0: return userProfile.futureAge > userProfile.age;
+      case 1: return userProfile.personality !== '';
+      case 2: return userProfile.goals.length > 0;
+      default: return false;
+    }
   };
 
   const currentStepData = steps[currentStep];
-  const IconComponent = currentStepData.icon;
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}
       <Navbar />
 
-      <div className="container mx-auto px-6 py-20">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            {/* Avatar Section */}
-            <div className="order-2 lg:order-1">
-              <Card className="card-modern bg-gradient-to-br from-[#725BF4] to-[#5d47d9] text-white border-0">
-                <CardContent className="p-10 text-center">
-                  <div className="mb-8">
-                    <h2 className="text-3xl font-bold mb-4">
-                      Your Future Self Preview
-                    </h2>
-                    <p className="text-purple-200">
-                      See how your avatar evolves with your choices!
-                    </p>
+      {/* Single Hero Section - Full Viewport */}
+      <div className="flex-1 flex items-center justify-center px-6 py-8">
+        <div className="w-full max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-12 gap-12 items-center">
+            {/* Main Content */}
+            <div className="lg:col-span-8">
+              {/* Step Content Card */}
+              <Card className="card-modern border-0 shadow-lg">
+                <CardContent className="p-8">
+                  {/* Step Header */}
+                  <div className="text-center mb-8">
+                    <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">{currentStepData.title}</h2>
+                    <p className="text-gray-600">{currentStepData.subtitle}</p>
                   </div>
-                  <div className="mb-8 relative">
-                    <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 to-orange-500/20 rounded-full blur-2xl animate-pulse" />
+
+                  {/* Step Content */}
+                  <div className="mb-8">
+                    {renderStepContent()}
+                  </div>
+
+                  {/* Navigation */}
+                  <div className="flex justify-between items-center pt-6 border-t border-gray-200">
+                    <Button
+                      onClick={handlePrevious}
+                      variant="outline"
+                      className="h-12 px-6 rounded-xl border-2 border-gray-300 text-gray-700 hover:bg-gray-50 font-semibold"
+                    >
+                      <ArrowLeft className="w-4 h-4 mr-2" />
+                      {currentStep === 0 ? 'Back' : 'Previous'}
+                    </Button>
+                    
+                    <Button
+                      onClick={handleNext}
+                      disabled={!isStepValid()}
+                      className="h-12 px-6 bg-[#725BF4] hover:bg-[#5d47d9] text-white border-0 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {currentStep === steps.length - 1 ? (
+                        <>
+                          <Sparkles className="w-4 h-4 mr-2" />
+                          Start Journey!
+                        </>
+                      ) : (
+                        <>
+                          Continue
+                          <ArrowRight className="w-4 h-4 ml-2" />
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Avatar Preview Sidebar */}
+            <div className="lg:col-span-4">
+              <Card className="card-modern bg-[#725BF4] text-white border-0 shadow-xl">
+                <CardContent className="p-8 text-center">
+                  <h3 className="text-xl font-bold mb-6 text-white">
+                    Your Future Self Preview
+                  </h3>
+                  
+                  <div className="mb-6 relative">
+                    <div className="absolute inset-0 bg-white/10 rounded-full blur-xl animate-pulse" />
                     <Avatar
                       age={userProfile.futureAge}
                       income={800000}
@@ -209,89 +300,23 @@ export default function OnboardingPage({ userProfile, onProfileUpdate, onComplet
                       size="large"
                     />
                   </div>
+                  
                   <div className="space-y-3">
                     <div className="text-2xl font-bold text-white">
                       Age {userProfile.futureAge}
                     </div>
-                    <div className="text-purple-200 capitalize">
-                      {userProfile.personality} Investor
-                    </div>
-                    <div className="text-sm text-purple-300">
-                      {userProfile.goals.length} life goals selected
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Form Section */}
-            <div className="order-1 lg:order-2">
-              <Card className="card-modern">
-                <CardHeader className="pb-6">
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="text-sm text-gray-500 font-medium">
-                      Step {currentStep + 1} of {steps.length}
-                    </div>
-                    <div className="flex space-x-2">
-                      {steps.map((_, index) => (
-                        <div
-                          key={index}
-                          className={`w-4 h-4 rounded-full transition-all duration-300 ${
-                            index <= currentStep 
-                              ? 'bg-gradient-to-r from-[#725BF4] to-[#5d47d9] shadow-lg' 
-                              : 'bg-gray-300'
-                          }`}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-4 mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-r from-[#725BF4] to-[#5d47d9] rounded-2xl flex items-center justify-center">
-                      <IconComponent className="w-6 h-6 text-white" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-3xl font-bold text-gray-900">
-                        {currentStepData.title}
-                      </CardTitle>
-                    </div>
-                  </div>
-                  <CardDescription className="text-lg text-gray-600 leading-relaxed">
-                    {currentStepData.description}
-                  </CardDescription>
-                </CardHeader>
-
-                <CardContent className="p-8 space-y-8">
-                  <div className="min-h-[300px] flex items-center">
-                    {currentStepData.component}
-                  </div>
-
-                  <div className="flex justify-between pt-6">
-                    <Button
-                      onClick={handlePrevious}
-                      variant="outline"
-                      className="h-14 px-8 rounded-2xl border-2 border-gray-300 text-gray-700 hover:bg-gray-50 font-semibold transition-all duration-300 hover:scale-105"
-                    >
-                      <ArrowLeft className="w-5 h-5 mr-2" />
-                      {currentStep === 0 ? 'Back to Accounts' : 'Previous'}
-                    </Button>
-                    
-                    <Button
-                      onClick={handleNext}
-                      disabled={currentStep === 2 && userProfile.goals.length === 0}
-                      className="h-14 px-8 bg-[#00A175] hover:bg-[#008a64] text-white border-0 rounded-2xl font-semibold transition-all duration-300 hover:scale-105 hover:shadow-xl disabled:opacity-50"
-                    >
-                      {currentStep === steps.length - 1 ? (
-                        <>
-                          <Sparkles className="w-5 h-5 mr-2" />
-                          Start Chatting!
-                        </>
-                      ) : (
-                        <>
-                          Next Step
-                          <ArrowRight className="w-5 h-5 ml-2" />
-                        </>
-                      )}
-                    </Button>
+                    {userProfile.personality && (
+                      <div className="inline-flex items-center bg-white/20 rounded-full px-4 py-2">
+                        <span className="text-white font-medium capitalize text-sm">
+                          {userProfile.personality} Investor
+                        </span>
+                      </div>
+                    )}
+                    {userProfile.goals.length > 0 && (
+                      <div className="text-white/80 text-sm">
+                        {userProfile.goals.length} life goal{userProfile.goals.length === 1 ? "" : "s"} selected
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>

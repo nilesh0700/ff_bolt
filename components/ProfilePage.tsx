@@ -88,8 +88,8 @@ export default function ProfilePage({
           {/* Header */}
           <div className="text-center mb-16">
             <h1 className="text-5xl md:text-6xl font-bold mb-8 leading-tight text-gray-900">
-              Your
-              <span className="block text-[#725BF4] mt-2">
+              Your{" "}
+              <span className="inline-block text-[#725BF4] mt-2">
                 Profile
               </span>
             </h1>
