@@ -5,12 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Sparkles, MessageCircle, TrendingUp, Shield, ArrowRight, Play, Star, Users, Zap, CheckCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-interface LandingPageProps {
-  onJoinBeta: () => void;
-  onTryDemo: () => void;
-}
-
-export default function LandingPage({ onJoinBeta, onTryDemo }: LandingPageProps) {
+export default function LandingPage() {
   const router = useRouter();
 
   const handleJoinBeta = () => {

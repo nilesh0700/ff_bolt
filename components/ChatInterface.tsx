@@ -102,25 +102,25 @@ export default function ChatInterface({ user, userProfile, connectedAccounts, on
         return {
           name: 'You',
           avatar: user.avatar,
-          bgColor: 'bg-gradient-to-br from-blue-500 to-indigo-600',
+          bgColor: 'bg-[#725BF4]',
           textColor: 'text-white',
-          bubbleColor: 'bg-gradient-to-r from-blue-500 to-indigo-600'
+          bubbleColor: 'bg-[#725BF4] text-white'
         };
       case 'future_self':
         return {
           name: `Future You (${message.futureAge})`,
           avatar: null,
-          bgColor: 'bg-gradient-to-br from-yellow-400 to-orange-500',
+          bgColor: 'bg-[#00A175]',
           textColor: 'text-black',
-          bubbleColor: 'bg-gradient-to-r from-yellow-400/20 to-orange-500/20 border border-yellow-400/30'
+          bubbleColor: 'bg-[#00A175] bg-opacity-10 border border-[#00A175] border-opacity-20 text-gray-800'
         };
       case 'ai_assistant':
         return {
           name: 'AI Assistant',
           avatar: null,
-          bgColor: 'bg-gradient-to-br from-purple-500 to-pink-600',
+          bgColor: 'bg-gray-600',
           textColor: 'text-white',
-          bubbleColor: 'bg-gradient-to-r from-purple-500/20 to-pink-500/20 border border-purple-400/30'
+          bubbleColor: 'bg-gray-50 border border-gray-200 text-gray-800'
         };
       default:
         return {
@@ -128,15 +128,15 @@ export default function ChatInterface({ user, userProfile, connectedAccounts, on
           avatar: null,
           bgColor: 'bg-gray-500',
           textColor: 'text-white',
-          bubbleColor: 'bg-gray-100'
+          bubbleColor: 'bg-gray-100 text-gray-800'
         };
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="bg-white/80 backdrop-blur-sm border-b border-slate-200 sticky top-0 z-50">
+      <header className="bg-white border-b border-gray-100 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
@@ -148,12 +148,12 @@ export default function ChatInterface({ user, userProfile, connectedAccounts, on
                 <Menu className="w-5 h-5" />
               </Button>
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center">
+                <div className="w-10 h-10 bg-[#725BF4] rounded-xl flex items-center justify-center">
                   <Sparkles className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold text-slate-800">Future Self Chat</h1>
-                  <p className="text-sm text-slate-600">Talking with your {userProfile.futureAge}-year-old self</p>
+                  <h1 className="text-xl font-bold text-gray-900">Future Self Chat</h1>
+                  <p className="text-sm text-gray-600">Talking with your {userProfile.futureAge}-year-old self</p>
                 </div>
               </div>
             </div>
@@ -162,7 +162,7 @@ export default function ChatInterface({ user, userProfile, connectedAccounts, on
               <Button 
                 onClick={() => onNavigate('scenarios')}
                 variant="outline"
-                className="hidden md:flex items-center space-x-2 rounded-2xl"
+                className="hidden md:flex items-center space-x-2 rounded-xl border-gray-300 text-gray-700 hover:bg-gray-50"
               >
                 <BarChart3 className="w-4 h-4" />
                 <span>Scenarios</span>
@@ -170,7 +170,7 @@ export default function ChatInterface({ user, userProfile, connectedAccounts, on
               <Button 
                 onClick={() => onNavigate('actions')}
                 variant="outline"
-                className="hidden md:flex items-center space-x-2 rounded-2xl"
+                className="hidden md:flex items-center space-x-2 rounded-xl border-gray-300 text-gray-700 hover:bg-gray-50"
               >
                 <Target className="w-4 h-4" />
                 <span>Actions</span>
@@ -178,7 +178,7 @@ export default function ChatInterface({ user, userProfile, connectedAccounts, on
               <Button 
                 onClick={() => onNavigate('progress')}
                 variant="outline"
-                className="hidden md:flex items-center space-x-2 rounded-2xl"
+                className="hidden md:flex items-center space-x-2 rounded-xl border-gray-300 text-gray-700 hover:bg-gray-50"
               >
                 <TrendingUp className="w-4 h-4" />
                 <span>Progress</span>
@@ -206,7 +206,7 @@ export default function ChatInterface({ user, userProfile, connectedAccounts, on
                       <User className="w-6 h-6 text-white" />
                     )
                   ) : message.sender === 'future_self' ? (
-                    <div className="text-black font-bold text-sm">{message.futureAge}</div>
+                    <div className="text-white font-bold text-sm">{message.futureAge}</div>
                   ) : (
                     <Bot className="w-6 h-6 text-white" />
                   )}
@@ -215,13 +215,13 @@ export default function ChatInterface({ user, userProfile, connectedAccounts, on
                 {/* Message Bubble */}
                 <div className={`max-w-2xl ${isUser ? 'text-right' : 'text-left'}`}>
                   <div className="flex items-center space-x-2 mb-2">
-                    <span className="text-sm font-semibold text-slate-700">{senderInfo.name}</span>
-                    <span className="text-xs text-slate-500">
+                    <span className="text-sm font-semibold text-gray-700">{senderInfo.name}</span>
+                    <span className="text-xs text-gray-500">
                       {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
                   
-                  <div className={`glass-effect rounded-3xl px-6 py-4 ${senderInfo.bubbleColor} ${senderInfo.textColor}`}>
+                  <div className={`rounded-2xl px-6 py-4 ${senderInfo.bubbleColor}`}>
                     <p className="leading-relaxed whitespace-pre-wrap">{message.content}</p>
                   </div>
                 </div>
@@ -232,31 +232,31 @@ export default function ChatInterface({ user, userProfile, connectedAccounts, on
           {/* Loading/Analyzing State */}
           {isLoading && (
             <div className="flex items-start space-x-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
-                <div className="text-black font-bold text-sm">{userProfile.futureAge}</div>
+              <div className="w-12 h-12 bg-[#00A175] rounded-full flex items-center justify-center flex-shrink-0">
+                <div className="text-white font-bold text-sm">{userProfile.futureAge}</div>
               </div>
               <div className="max-w-2xl">
                 <div className="flex items-center space-x-2 mb-2">
-                  <span className="text-sm font-semibold text-slate-700">Future You ({userProfile.futureAge})</span>
+                  <span className="text-sm font-semibold text-gray-700">Future You ({userProfile.futureAge})</span>
                 </div>
-                <div className="glass-effect rounded-3xl px-6 py-4 bg-gradient-to-r from-yellow-400/20 to-orange-500/20 border border-yellow-400/30">
+                <div className="rounded-2xl px-6 py-4 bg-[#00A175] bg-opacity-10 border border-[#00A175] border-opacity-20">
                   {isAnalyzing ? (
                     <div className="flex items-center space-x-3">
                       <div className="flex space-x-1">
-                        <div className="w-2 h-2 bg-yellow-500 rounded-full animate-bounce" />
-                        <div className="w-2 h-2 bg-yellow-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
-                        <div className="w-2 h-2 bg-yellow-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
+                        <div className="w-2 h-2 bg-[#00A175] rounded-full animate-bounce" />
+                        <div className="w-2 h-2 bg-[#00A175] rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
+                        <div className="w-2 h-2 bg-[#00A175] rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
                       </div>
-                      <span className="text-slate-700">Analyzing your {connectedAccounts.join(' & ')} data...</span>
+                      <span className="text-gray-700">Analyzing your {connectedAccounts.join(' & ')} data...</span>
                     </div>
                   ) : (
                     <div className="flex items-center space-x-3">
                       <div className="flex space-x-1">
-                        <div className="w-2 h-2 bg-yellow-500 rounded-full animate-bounce" />
-                        <div className="w-2 h-2 bg-yellow-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
-                        <div className="w-2 h-2 bg-yellow-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
+                        <div className="w-2 h-2 bg-[#00A175] rounded-full animate-bounce" />
+                        <div className="w-2 h-2 bg-[#00A175] rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
+                        <div className="w-2 h-2 bg-[#00A175] rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
                       </div>
-                      <span className="text-slate-700">Thinking...</span>
+                      <span className="text-gray-700">Thinking...</span>
                     </div>
                   )}
                 </div>
@@ -269,7 +269,7 @@ export default function ChatInterface({ user, userProfile, connectedAccounts, on
       </div>
 
       {/* Input Area */}
-      <div className="sticky bottom-0 bg-white/80 backdrop-blur-sm border-t border-slate-200 p-6">
+      <div className="sticky bottom-0 bg-white border-t border-gray-100 p-6">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center space-x-4">
             <div className="flex-1 relative">
@@ -278,14 +278,14 @@ export default function ChatInterface({ user, userProfile, connectedAccounts, on
                 onChange={(e) => setInputMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Ask your future self anything about money..."
-                className="h-14 pr-16 rounded-3xl border-2 border-slate-200 focus:border-indigo-500 bg-white text-base"
+                className="h-14 pr-16 rounded-2xl border-2 border-gray-200 focus:border-[#725BF4] bg-white text-base"
                 disabled={isLoading}
               />
               <Button
                 onClick={toggleVoice}
                 variant="ghost"
                 className={`absolute right-2 top-1/2 transform -translate-y-1/2 w-10 h-10 rounded-full ${
-                  isVoiceActive ? 'bg-red-100 text-red-600' : 'text-slate-500 hover:text-slate-700'
+                  isVoiceActive ? 'bg-red-100 text-red-600' : 'text-gray-500 hover:text-gray-700'
                 }`}
               >
                 {isVoiceActive ? <MicOff className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
@@ -295,14 +295,14 @@ export default function ChatInterface({ user, userProfile, connectedAccounts, on
             <Button
               onClick={handleSendMessage}
               disabled={!inputMessage.trim() || isLoading}
-              className="h-14 w-14 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white border-0 transition-all duration-300 hover:scale-105 disabled:opacity-50"
+              className="h-14 w-14 rounded-full bg-[#725BF4] hover:bg-[#5d47d9] text-white border-0 transition-all duration-200 disabled:opacity-50"
             >
               <Send className="w-5 h-5" />
             </Button>
           </div>
           
           <div className="flex justify-center mt-4">
-            <p className="text-xs text-slate-500 text-center max-w-2xl">
+            <p className="text-xs text-gray-500 text-center max-w-2xl">
               Your future self has access to your {connectedAccounts.join(' & ')} data to provide personalized advice. 
               All conversations are private and secure.
             </p>

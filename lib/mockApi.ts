@@ -49,17 +49,17 @@ export const mockApi = {
     const responses = [
       {
         message: `Hey! Looking at your Fi Money data, I can see you're saving about ₹23,000 per month. That's fantastic! At this rate, by the time I'm ${userProfile.futureAge}, we'll have built a solid emergency fund of ₹8 lakhs. But here's what I'm thinking - what if we could optimize your spending on dining out? I noticed you spend about ₹12,000 monthly on restaurants. If we cut that by just 30%, we could invest an extra ₹3,600 monthly in mutual funds. Over 20 years, that's an additional ₹28 lakhs! 🚀`,
-        sender: 'future_self',
+        sender: 'future_self' as const,
         futureAge: userProfile.futureAge
       },
       {
         message: `I've been analyzing your investment portfolio on Zerodha. You're doing well with a 18.4% return! However, I notice you're heavily invested in large-cap stocks. While that's safe, diversifying into some mid-cap and small-cap funds could potentially boost our returns. Based on your ${userProfile.personality} risk profile, I'd suggest allocating 20% to mid-cap funds. This could increase our portfolio value by an estimated ₹15 lakhs by retirement! Want me to show you some specific fund recommendations?`,
-        sender: 'future_self',
+        sender: 'future_self' as const,
         futureAge: userProfile.futureAge
       },
       {
         message: `Based on your current financial data and goals, I've run some projections. Here's what I found: Your current savings rate of 27% is excellent! If you maintain this, plus the investment optimizations we discussed, you'll be able to achieve your dream home goal by 2029 - that's 2 years earlier than your original target! The key is consistency and making small adjustments. Should I create a detailed action plan for you?`,
-        sender: 'ai_assistant'
+        sender: 'ai_assistant' as const
       }
     ];
     
