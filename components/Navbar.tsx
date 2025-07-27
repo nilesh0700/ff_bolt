@@ -17,8 +17,9 @@ import {
   X,
   Home
 } from 'lucide-react';
-import { useAuth } from '@/lib/auth';
+import { useAuth } from '@/lib/supabase-auth';
 import { useState } from 'react';
+import Image from 'next/image';
 
 interface NavbarProps {
   className?: string;
@@ -29,7 +30,7 @@ export default function Navbar({
 }: NavbarProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const auth = useAuth();
+  const { user, profile, signOut } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
   // Determine page type
@@ -49,26 +50,18 @@ export default function Navbar({
       case '/scenarios': return { title: 'Scenarios', showTitle: true };
       case '/progress': return { title: 'Progress', showTitle: true };
       case '/profile': return { title: 'Profile', showTitle: true };
-      default: return { title: 'Financial Future', showTitle: true };
+      default: return { title: 'App', showTitle: true };
     }
   };
 
-  const currentPage = getCurrentPageInfo();
+  const { title, showTitle } = getCurrentPageInfo();
 
-  // Navigation items for authenticated users
+  // App navigation items
   const appNavItems = [
-    { path: '/chat', label: 'Chat', icon: MessageCircle, active: pathname === '/chat' },
-    { path: '/actions', label: 'Actions', icon: Target, active: pathname === '/actions' },
-    { path: '/scenarios', label: 'Scenarios', icon: BarChart3, active: pathname === '/scenarios' },
-    { path: '/progress', label: 'Progress', icon: TrendingUp, active: pathname === '/progress' },
-  ];
-
-  // Landing page navigation items
-  const landingNavItems = [
-    { href: '#features', label: 'Features' },
-    { href: '#how-it-works', label: 'How it Works' },
-    { href: '#testimonials', label: 'Reviews' },
-    { href: '#pricing', label: 'Pricing' },
+    { name: 'Chat', href: '/chat', icon: MessageCircle, current: pathname === '/chat' },
+    { name: 'Actions', href: '/actions', icon: Target, current: pathname === '/actions' },
+    { name: 'Scenarios', href: '/scenarios', icon: TrendingUp, current: pathname === '/scenarios' },
+    { name: 'Progress', href: '/progress', icon: BarChart3, current: pathname === '/progress' },
   ];
 
   const handleNavigation = (path: string) => {
@@ -80,232 +73,249 @@ export default function Navbar({
     router.push('/auth');
   };
 
+  const handleSignOut = async () => {
+    await signOut();
+    router.push('/');
+  };
+
   return (
-    <header className={`sticky top-0 bg-white/95 backdrop-blur-sm border-b border-gray-200 z-50 ${className}`}>
-      <div className="container mx-auto px-4 lg:px-6">
-        <nav className="flex items-center justify-between h-16 lg:h-20">
-          {/* Left Side */}
-          <div className="flex items-center space-x-6">
-            {/* Logo */}
-            <div 
-              className="flex items-center space-x-3 cursor-pointer hover:opacity-80 transition-opacity" 
+    <nav className={`border-b border-gray-100 bg-white ${className}`}>
+      <div className="container mx-auto px-6">
+        <div className="flex items-center justify-between h-16">
+          {/* Logo */}
+          <div className="flex items-center">
+            <button 
               onClick={() => handleNavigation('/')}
+              className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
             >
               <div className="w-8 h-8 lg:w-10 lg:h-10 bg-gradient-to-br from-[#725BF4] to-[#5d47d9] rounded-xl flex items-center justify-center shadow-lg p-1">
-                <img 
+                <Image 
                   src="/ff_logo.png" 
                   alt="Future Self Logo" 
                   className="w-full h-full object-contain rounded-lg"
+                  width={10}
+                  height={10}
                 />
               </div>
-              <div className="flex flex-col">
-                <span className="text-lg lg:text-xl font-bold text-gray-900">
-                  Future Self
-                </span>
-                {currentPage.showTitle && (
-                  <span className="text-xs text-gray-500 -mt-1 hidden sm:block">
-                    {currentPage.title}
-                  </span>
-                )}
+              <span className="text-xl font-bold text-gray-900">
+                {showTitle ? title : 'Future Self'}
+              </span>
+            </button>
+          </div>
+
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center justify-between flex-1 ml-8">
+            {/* Landing Page Navigation */}
+            {isLandingPage && (
+              <div className="flex items-center space-x-8">
+                <a href="#features" className="text-gray-600 hover:text-gray-900 transition-colors font-medium">Features</a>
+                <a href="#how-it-works" className="text-gray-600 hover:text-gray-900 transition-colors font-medium">How It Works</a>
+                {/* <a href="#testimonials" className="text-gray-600 hover:text-gray-900 transition-colors font-medium">Reviews</a> */}
               </div>
+            )}
+
+            {/* App Navigation for authenticated users */}
+            {isAppPage && user && (
+              <div className="hidden lg:flex items-center space-x-2">
+                {appNavItems.map((item) => {
+                  const IconComponent = item.icon;
+                  return (
+                    <Button
+                      key={item.name}
+                      onClick={() => handleNavigation(item.href)}
+                      variant={item.current ? "default" : "ghost"}
+                      className={`flex items-center space-x-2 rounded-xl transition-all duration-200 ${
+                        item.current 
+                          ? 'bg-gradient-to-r from-[#725BF4] to-[#5d47d9] text-white shadow-lg' 
+                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                      }`}
+                    >
+                      <IconComponent className="w-4 h-4" />
+                      <span>{item.name}</span>
+                    </Button>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Right Side */}
+            <div className="flex items-center space-x-3">
+              {user ? (
+                /* Authenticated User - Only Profile Dropdown */
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button 
+                      variant="ghost" 
+                      className="relative h-10 w-10 rounded-full hover:bg-gray-100"
+                    >
+                      <Avatar className="h-8 w-8 lg:h-9 lg:w-9">
+                        <AvatarImage src={user?.user_metadata?.avatar_url} alt={user?.user_metadata?.full_name} />
+                        <AvatarFallback className="bg-gradient-to-br from-[#725BF4] to-[#5d47d9] text-white text-sm font-semibold">
+                          {user?.user_metadata?.full_name?.charAt(0)?.toUpperCase() || user?.email?.charAt(0)?.toUpperCase() || 'U'}
+                        </AvatarFallback>
+                      </Avatar>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-64" align="end" forceMount>
+                    <div className="flex items-center justify-start gap-3 p-3">
+                      <Avatar className="h-10 w-10">
+                        <AvatarImage src={user?.user_metadata?.avatar_url} alt={user?.user_metadata?.full_name} />
+                        <AvatarFallback className="bg-gradient-to-br from-[#725BF4] to-[#5d47d9] text-white">
+                          {user?.user_metadata?.full_name?.charAt(0)?.toUpperCase() || user?.email?.charAt(0)?.toUpperCase() || 'U'}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex flex-col space-y-1 leading-none">
+                        <p className="font-medium text-sm">{user?.user_metadata?.full_name || user?.email || 'User'}</p>
+                        <p className="text-xs text-gray-500 truncate max-w-[150px]">
+                          {user?.email || 'user@email.com'}
+                        </p>
+                        {profile && (
+                          <Badge variant="secondary" className="text-xs w-fit mt-1">
+                            Profile Complete
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem 
+                      onClick={() => handleNavigation('/profile')}
+                      className="cursor-pointer"
+                    >
+                      <User className="mr-2 h-4 w-4" />
+                      <span>Profile Settings</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleSignOut} className="text-red-600 focus:text-red-600 cursor-pointer">
+                      <LogOut className="mr-2 h-4 w-4" />
+                      <span>Sign Out</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                /* Unauthenticated User - Login/Signup Buttons */
+                <div className="hidden md:flex items-center space-x-3">
+                  <Button 
+                    onClick={() => handleAuthAction('login')}
+                    variant="ghost" 
+                    className="text-gray-600 hover:text-gray-900 font-semibold rounded-xl"
+                  >
+                    Sign In
+                  </Button>
+                  <Button 
+                    onClick={() => handleAuthAction('signup')}
+                    className="bg-gradient-to-r from-[#725BF4] to-[#5d47d9] hover:from-[#5d47d9] hover:to-[#725BF4] text-white font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
+                  >
+                    Get Started
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Center - Navigation Links */}
-          {isLandingPage && (
-            <div className="hidden lg:flex items-center space-x-8">
-              {landingNavItems.map((item) => (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  className="text-gray-600 hover:text-gray-900 transition-colors font-medium text-sm"
-                >
-                  {item.label}
-                </a>
-              ))}
-            </div>
-          )}
-
-          {/* App Navigation for authenticated users */}
-          {isAppPage && auth.isAuthenticated && (
-            <div className="hidden lg:flex items-center space-x-2">
-              {appNavItems.map((item) => {
-                const IconComponent = item.icon;
-                return (
-                  <Button
-                    key={item.path}
-                    onClick={() => handleNavigation(item.path)}
-                    variant={item.active ? "default" : "ghost"}
-                    size="sm"
-                    className={`flex items-center space-x-2 rounded-xl ${
-                      item.active 
-                        ? 'bg-[#725BF4] text-white shadow-md' 
-                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-                    }`}
-                  >
-                    <IconComponent className="w-4 h-4" />
-                    <span className="hidden xl:inline">{item.label}</span>
-                  </Button>
-                );
-              })}
-            </div>
-          )}
-
-          {/* Right Side */}
-          <div className="flex items-center space-x-3">
-            {auth.isAuthenticated ? (
-              /* Authenticated User - Only Profile Dropdown */
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button 
-                    variant="ghost" 
-                    className="relative h-10 w-10 rounded-full hover:bg-gray-100"
-                  >
-                    <Avatar className="h-8 w-8 lg:h-9 lg:w-9">
-                      <AvatarImage src={auth.user?.avatar} alt={auth.user?.name} />
-                      <AvatarFallback className="bg-gradient-to-br from-[#725BF4] to-[#5d47d9] text-white text-sm font-semibold">
-                        {auth.user?.name?.charAt(0)?.toUpperCase() || 'U'}
-                      </AvatarFallback>
-                    </Avatar>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-64" align="end" forceMount>
-                  <div className="flex items-center justify-start gap-3 p-3">
-                    <Avatar className="h-10 w-10">
-                      <AvatarImage src={auth.user?.avatar} alt={auth.user?.name} />
-                      <AvatarFallback className="bg-gradient-to-br from-[#725BF4] to-[#5d47d9] text-white">
-                        {auth.user?.name?.charAt(0)?.toUpperCase() || 'U'}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex flex-col space-y-1 leading-none">
-                      <p className="font-medium text-sm">{auth.user?.name || 'User'}</p>
-                      <p className="text-xs text-gray-500 truncate max-w-[150px]">
-                        {auth.user?.email || 'user@email.com'}
-                      </p>
-                      {auth.hasProfile && (
-                        <Badge variant="secondary" className="text-xs w-fit mt-1">
-                          Profile Complete
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-                  <DropdownMenuSeparator />
-                  
-                  {/* Quick Navigation */}
-                  {isAppPage && (
-                    <>
-                      <DropdownMenuItem onClick={() => handleNavigation('/chat')}>
-                        <MessageCircle className="mr-2 h-4 w-4" />
-                        <span>Chat with Future Self</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleNavigation('/progress')}>
-                        <TrendingUp className="mr-2 h-4 w-4" />
-                        <span>View Progress</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                    </>
-                  )}
-                  
-                  <DropdownMenuItem onClick={() => handleNavigation('/profile')}>
-                    <User className="mr-2 h-4 w-4" />
-                    <span>Profile & Settings</span>
-                  </DropdownMenuItem>
-                  
-                  {!isLandingPage && (
-                    <DropdownMenuItem onClick={() => handleNavigation('/')}>
-                      <Home className="mr-2 h-4 w-4" />
-                      <span>Home</span>
-                    </DropdownMenuItem>
-                  )}
-                  
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={auth.logout} className="text-red-600 focus:text-red-600">
-                    <LogOut className="mr-2 h-4 w-4" />
-                    <span>Sign out</span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+          {/* Mobile Menu Toggle */}
+          <div className="md:hidden">
+            {(isAppPage && user) || isLandingPage ? (
+              <Button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                variant="ghost"
+                size="sm"
+                className="p-2"
+              >
+                {isMobileMenuOpen ? (
+                  <X className="h-6 w-6 text-gray-600" />
+                ) : (
+                  <Menu className="h-6 w-6 text-gray-600" />
+                )}
+              </Button>
             ) : (
-              /* Unauthenticated User */
-              <div className="flex items-center space-x-3">
-                <Button
+              !user && (
+                <Button 
                   onClick={() => handleAuthAction('login')}
-                  variant="ghost"
                   size="sm"
-                  className="text-gray-600 hover:text-gray-900 font-medium rounded-xl hover:bg-gray-100"
+                  className="bg-gradient-to-r from-[#725BF4] to-[#5d47d9] text-white rounded-xl"
                 >
                   Sign In
                 </Button>
-                <Button
+              )
+            )}
+          </div>
+        </div>
+
+        {/* Mobile Menu */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden border-t border-gray-100 py-4">
+            {isAppPage && user && (
+              <div className="space-y-2 mb-4">
+                {appNavItems.map((item) => {
+                  const IconComponent = item.icon;
+                  return (
+                    <Button
+                      key={item.name}
+                      onClick={() => handleNavigation(item.href)}
+                      variant={item.current ? "default" : "ghost"}
+                      className={`w-full justify-start space-x-2 rounded-xl ${
+                        item.current 
+                          ? 'bg-gradient-to-r from-[#725BF4] to-[#5d47d9] text-white' 
+                          : 'text-gray-600'
+                      }`}
+                    >
+                      <IconComponent className="w-4 h-4" />
+                      <span>{item.name}</span>
+                    </Button>
+                  );
+                })}
+              </div>
+            )}
+
+            {isLandingPage && (
+              <div className="space-y-2 mb-4">
+                <a href="#features" className="block py-2 text-gray-600 hover:text-gray-900 font-medium">Features</a>
+                <a href="#how-it-works" className="block py-2 text-gray-600 hover:text-gray-900 font-medium">How It Works</a>
+                <a href="#testimonials" className="block py-2 text-gray-600 hover:text-gray-900 font-medium">Reviews</a>
+              </div>
+            )}
+
+            {!user && (
+              <div className="space-y-2 pt-4 border-t border-gray-100">
+                <Button 
+                  onClick={() => handleAuthAction('login')}
+                  variant="ghost" 
+                  className="w-full justify-start text-gray-600 hover:text-gray-900 font-semibold"
+                >
+                  Sign In
+                </Button>
+                <Button 
                   onClick={() => handleAuthAction('signup')}
-                  size="sm"
-                  className="bg-gradient-to-r from-[#725BF4] to-[#5d47d9] hover:from-[#5d47d9] hover:to-[#4b39c7] text-white font-semibold px-4 py-2 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
+                  className="w-full justify-start bg-gradient-to-r from-[#725BF4] to-[#5d47d9] text-white font-semibold"
                 >
                   Get Started
                 </Button>
               </div>
             )}
 
-            {/* Mobile Menu Button */}
-            {(isAppPage && auth.isAuthenticated) || isLandingPage ? (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="lg:hidden rounded-xl"
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              >
-                {isMobileMenuOpen ? (
-                  <X className="w-5 h-5" />
-                ) : (
-                  <Menu className="w-5 h-5" />
-                )}
-              </Button>
-            ) : null}
-          </div>
-        </nav>
-
-        {/* Mobile Menu */}
-        {isMobileMenuOpen && (
-          <div className="lg:hidden border-t border-gray-200 py-4 space-y-2">
-            {isLandingPage && (
-              <>
-                {landingNavItems.map((item) => (
-                  <a
-                    key={item.href}
-                    href={item.href}
-                    className="block px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-colors"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    {item.label}
-                  </a>
-                ))}
-              </>
-            )}
-            
-            {isAppPage && auth.isAuthenticated && (
-              <>
-                {appNavItems.map((item) => {
-                  const IconComponent = item.icon;
-                  return (
-                    <button
-                      key={item.path}
-                      onClick={() => handleNavigation(item.path)}
-                      className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${
-                        item.active 
-                          ? 'bg-[#725BF4] text-white' 
-                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                      }`}
-                    >
-                      <IconComponent className="w-5 h-5" />
-                      <span className="font-medium">{item.label}</span>
-                    </button>
-                  );
-                })}
-              </>
+            {user && (
+              <div className="space-y-2 pt-4 border-t border-gray-100">
+                <Button 
+                  onClick={() => handleNavigation('/profile')}
+                  variant="ghost" 
+                  className="w-full justify-start text-gray-600 hover:text-gray-900"
+                >
+                  <User className="mr-2 h-4 w-4" />
+                  Profile Settings
+                </Button>
+                <Button 
+                  onClick={handleSignOut}
+                  variant="ghost" 
+                  className="w-full justify-start text-red-600 hover:text-red-700"
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sign Out
+                </Button>
+              </div>
             )}
           </div>
         )}
       </div>
-    </header>
+    </nav>
   );
 }

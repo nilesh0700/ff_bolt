@@ -7,102 +7,75 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ArrowLeft, Mail, Sparkles, Chrome, Zap, Shield, Users } from 'lucide-react';
 import Navbar from '@/components/Navbar';
-import { generateUserDefaults, generateUserId, generateAvatarUrl } from '@/lib/utils';
+import { useAuth } from '@/lib/supabase-auth';
+import { useRouter } from 'next/navigation';
 
 interface AuthPageProps {
-  onAuth: (userData: any) => void;
   onBack: () => void;
 }
 
-export default function AuthPage({ onAuth, onBack }: AuthPageProps) {
+export default function AuthPage({ onBack }: AuthPageProps) {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [magicLinkSent, setMagicLinkSent] = useState(false);
-
-  // Demo credentials - now generated dynamically
-  const demoCredentials = {
-    email: 'demo@futureself.ai',
-    name: 'Demo User'
-  };
+  const [error, setError] = useState<string | null>(null);
+  
+  const { signInWithEmail, signUpWithEmail, signInWithOAuth } = useAuth();
+  const router = useRouter();
 
   const handleGoogleAuth = async () => {
     setIsLoading(true);
-    // Simulate Google OAuth
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    setError(null);
     
-    // Generate dynamic user data instead of hardcoded values
-    const userData = generateUserDefaults('google.user@gmail.com');
-    onAuth({
-      ...userData,
-      name: 'Google User', // Override name for Google auth
-    });
-    setIsLoading(false);
+    const { error } = await signInWithOAuth('google');
+    
+    if (error) {
+      setError(error.message);
+      setIsLoading(false);
+    } else {
+      // Redirect will happen automatically after successful OAuth
+      router.push('/connect');
+    }
   };
 
-  const handleMagicLink = async () => {
-    if (!email) return;
+  const handleEmailAuth = async () => {
+    if (!email || !password) return;
+    
     setIsLoading(true);
-    // Simulate magic link
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    setMagicLinkSent(true);
-    setIsLoading(false);
+    setError(null);
     
-    // Auto-login after 3 seconds for demo
-    setTimeout(() => {
-      const userData = email === demoCredentials.email 
-        ? {
-            id: generateUserId(),
-            name: demoCredentials.name,
-            email: demoCredentials.email,
-            avatar: generateAvatarUrl(demoCredentials.name)
-          }
-        : generateUserDefaults(email);
-      
-      onAuth(userData);
-    }, 3000);
+    const { error } = isLogin 
+      ? await signInWithEmail(email, password)
+      : await signUpWithEmail(email, password);
+    
+    if (error) {
+      setError(error.message);
+    } else {
+      router.push('/connect');
+    }
+    
+    setIsLoading(false);
   };
 
-  const handleDemoLogin = () => {
-    const userData = {
-      id: generateUserId(),
-      name: demoCredentials.name,
-      email: demoCredentials.email,
-      avatar: generateAvatarUrl(demoCredentials.name)
-    };
-    onAuth(userData);
+  const handleDemoLogin = async () => {
+    setIsLoading(true);
+    setError(null);
+    
+    // Use demo credentials for quick testing
+    const { error } = await signInWithEmail('demo@futureself.ai', 'demo123456');
+    
+    if (error) {
+      setError('Demo account not available. Please use your own credentials.');
+    } else {
+      router.push('/connect');
+    }
+    
+    setIsLoading(false);
   };
 
-  if (magicLinkSent) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center p-4">
-        <Card className="border border-gray-200 rounded-2xl shadow-lg max-w-md w-full">
-          <CardContent className="p-8 text-center">
-            <div className="w-20 h-20 bg-[#00A175] rounded-2xl flex items-center justify-center mx-auto mb-6">
-              <Mail className="w-10 h-10 text-white" />
-            </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">Check Your Email!</h2>
-            <p className="text-gray-600 mb-6 leading-relaxed">
-              We've sent a magic link to <strong className="text-gray-900">{email}</strong>. Click the link to sign in instantly.
-            </p>
-            <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 mb-6">
-              <p className="text-blue-700 text-sm flex items-center justify-center">
-                <Zap className="w-4 h-4 mr-2" />
-                Demo mode: Auto-signing you in...
-              </p>
-            </div>
-            <Button 
-              onClick={() => setMagicLinkSent(false)}
-              variant="outline"
-              className="border-2 border-gray-300 text-gray-700 hover:bg-gray-50 rounded-xl"
-            >
-              Back to Sign In
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -173,19 +146,22 @@ export default function AuthPage({ onAuth, onBack }: AuthPageProps) {
                 </CardHeader>
 
                 <CardContent className="p-6 space-y-4">
+                  {/* Error Message */}
+                  {error && (
+                    <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-center">
+                      <p className="text-red-700 text-sm">{error}</p>
+                    </div>
+                  )}
+
                   {/* Demo Login Banner */}
                   <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 text-center">
                     <p className="text-yellow-800 text-sm mb-3 flex items-center justify-center">
                       <Sparkles className="w-4 h-4 mr-2" />
                       Try the demo:
                     </p>
-                    <div className="bg-white border border-yellow-200 rounded-lg p-3 mb-3">
-                      <p className="text-gray-700 font-mono text-xs">
-                        {demoCredentials.email}
-                      </p>
-                    </div>
                     <Button 
                       onClick={handleDemoLogin}
+                      disabled={isLoading}
                       className="bg-[#725BF4] hover:bg-[#5d47d9] text-white font-semibold w-full rounded-xl transition-all duration-200 h-10"
                     >
                       <Zap className="w-4 h-4 mr-2" />
@@ -221,11 +197,11 @@ export default function AuthPage({ onAuth, onBack }: AuthPageProps) {
                       <div className="w-full border-t border-gray-200" />
                     </div>
                     <div className="relative flex justify-center text-sm">
-                      <span className="bg-white px-4 text-gray-500">or use magic link</span>
+                      <span className="bg-white px-4 text-gray-500">or use email & password</span>
                     </div>
                   </div>
 
-                  {/* Magic Link */}
+                  {/* Email & Password */}
                   <div className="space-y-3">
                     <div>
                       <Label htmlFor="email" className="text-gray-700 font-medium text-sm">Email address</Label>
@@ -239,9 +215,21 @@ export default function AuthPage({ onAuth, onBack }: AuthPageProps) {
                       />
                     </div>
                     
+                    <div>
+                      <Label htmlFor="password" className="text-gray-700 font-medium text-sm">Password</Label>
+                      <Input
+                        id="password"
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder={isLogin ? "Enter your password" : "Create a password (min 6 characters)"}
+                        className="h-12 border-2 border-gray-200 focus:border-[#725BF4] rounded-xl mt-1 transition-colors"
+                      />
+                    </div>
+                    
                     <Button 
-                      onClick={handleMagicLink}
-                      disabled={!email || isLoading}
+                      onClick={handleEmailAuth}
+                      disabled={!email || !password || isLoading}
                       className="w-full h-12 bg-[#00A175] hover:bg-[#008a64] text-white border-0 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50"
                     >
                       {isLoading ? (
@@ -249,7 +237,7 @@ export default function AuthPage({ onAuth, onBack }: AuthPageProps) {
                       ) : (
                         <Mail className="w-5 h-5 mr-3" />
                       )}
-                      Send Magic Link
+                      {isLogin ? 'Sign In' : 'Create Account'}
                     </Button>
                   </div>
 
