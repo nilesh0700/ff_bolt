@@ -6,7 +6,7 @@ A Next.js application that connects your financial accounts to provide AI-powere
 
 - 🔐 **Secure Authentication** - Supabase Auth with Google OAuth and email/password
 - 💳 **Account Integration** - Connect Fi Money, Zerodha, and other financial accounts
-- 🤖 **AI Chat Interface** - Chat with your future self for financial advice
+- 🤖 **AI Chat Interface** - Chat with your future self for financial advice powered by Google Gemini AI
 - 📊 **Progress Tracking** - Monitor your financial health and goals
 - 🎯 **Action Center** - Personalized recommendations for financial improvement
 - 📈 **Scenario Planning** - Explore different financial futures based on your decisions
@@ -16,6 +16,7 @@ A Next.js application that connects your financial accounts to provide AI-powere
 
 - **Frontend**: Next.js 14, React, TypeScript, Tailwind CSS
 - **Backend**: Supabase (PostgreSQL, Auth, Real-time)
+- **AI Integration**: Google Gemini AI for intelligent financial advice
 - **State Management**: React Query for server state
 - **UI Components**: shadcn/ui, Radix UI
 - **Icons**: Lucide React
@@ -38,12 +39,19 @@ A Next.js application that connects your financial accounts to provide AI-powere
 4. Account connections established
 5. AI recommendations generated
 
+### AI Chat Integration
+- **Gemini AI**: Google's advanced AI model for personalized financial advice
+- **Future Self Persona**: AI responds as user's future self (70% of time)
+- **Personalized Context**: Uses user profile, goals, and connected accounts
+- **Fallback System**: Graceful degradation to mock responses if API unavailable
+
 ## Setup Instructions
 
 ### Prerequisites
 - Node.js 18+ 
 - npm or yarn
 - Supabase account
+- Google AI Studio account (for Gemini API)
 
 ### 1. Clone the Repository
 ```bash
@@ -76,7 +84,24 @@ npm install
 3. Add your Google OAuth credentials
 4. Set authorized redirect URI: `https://<your-project-ref>.supabase.co/auth/v1/callback`
 
-### 3. Environment Variables
+### 3. Set Up Gemini AI (Optional but Recommended)
+
+#### Get Gemini API Key
+1. Go to [Google AI Studio](https://makersuite.google.com/app/apikey)
+2. Sign in with your Google account
+3. Click "Create API Key"
+4. Copy the generated API key
+
+#### Add Environment Variable
+Add this to your `.env.local` file:
+```env
+NEXT_PUBLIC_GEMINI_API_KEY=your-gemini-api-key-here
+```
+
+#### Test the Integration
+Visit `/test-gemini` in your app to verify the Gemini API integration is working.
+
+### 4. Environment Variables
 
 Create a `.env.local` file in the root directory:
 
@@ -85,6 +110,9 @@ Create a `.env.local` file in the root directory:
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+
+# Gemini AI Configuration (Optional)
+NEXT_PUBLIC_GEMINI_API_KEY=your_gemini_api_key
 
 # Application Configuration  
 NEXTAUTH_SECRET=your-secret-key
@@ -97,7 +125,7 @@ To get these values:
 3. Copy the Project URL and anon public key
 4. Copy the service role key (keep this secret!)
 
-### 4. Run the Development Server
+### 5. Run the Development Server
 
 ```bash
 npm run dev
@@ -110,6 +138,8 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 ```
 ├── app/                    # Next.js 14 app directory
 │   ├── api/               # API routes
+│   │   ├── chat/          # Gemini AI chat endpoint
+│   │   └── ...            # Other API routes
 │   ├── auth/              # Authentication pages
 │   ├── connect/           # Account connection
 │   ├── onboarding/        # User onboarding
@@ -117,13 +147,15 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 │   ├── actions/           # Action center
 │   ├── scenarios/         # Scenario planning
 │   ├── progress/          # Progress tracking
-│   └── profile/           # Profile management
+│   ├── profile/           # Profile management
+│   └── test-gemini/       # Gemini API test page
 ├── components/            # React components
 │   ├── ui/               # Base UI components (shadcn/ui)
 │   └── ...               # Feature components
 ├── lib/                  # Utilities and configurations
 │   ├── supabase.ts       # Supabase client
 │   ├── supabase-auth.ts  # Authentication hooks
+│   ├── gemini.ts         # Gemini AI integration
 │   ├── react-query.ts    # React Query setup
 │   ├── database.types.ts # TypeScript types
 │   └── hooks/            # Custom hooks
@@ -139,6 +171,13 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 - **Protected Routes**: Automatic redirects for unauthenticated users
 - **Profile Management**: Complete user profile system
 - **Session Management**: Persistent sessions with automatic refresh
+
+### AI Chat System
+- **Gemini AI Integration**: Advanced AI-powered financial advice
+- **Future Self Persona**: AI responds as user's future self
+- **Personalized Context**: Uses user profile, goals, and financial data
+- **Fallback System**: Graceful degradation when AI unavailable
+- **Conversation History**: Persistent chat history in database
 
 ### Database Integration
 - **Row Level Security**: Secure data access per user
@@ -162,9 +201,31 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 - `PUT /api/profile` - Update user profile
 - `POST /api/profile` - Create user profile
 
+### AI Chat
+- `POST /api/chat` - Send message to Gemini AI and get response
+
 ### Recommendations
 - `GET /api/recommendations` - Get user recommendations
 - `POST /api/recommendations` - Create recommendation
+
+## AI Integration Details
+
+### How the AI Works
+1. **User sends message** → ChatInterface component
+2. **API call** → `/api/chat` route with user context
+3. **Gemini processing** → AI generates personalized response
+4. **Response** → Future self or AI assistant persona
+
+### AI Features
+- **Personalized Responses**: Uses user age, goals, personality, and financial data
+- **Financial Context**: Aware of connected accounts (Fi Money, Zerodha)
+- **Future Self Persona**: 70% of responses come from user's future self
+- **Smart Fallbacks**: Graceful degradation to mock responses if AI unavailable
+
+### Customization
+- **System Prompt**: Modify `lib/gemini.ts` to change AI personality
+- **Response Distribution**: Adjust future self vs AI assistant ratio
+- **Conversation History**: Add message history for more contextual responses
 
 ## Development Guidelines
 
@@ -186,6 +247,12 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 - Validate all user inputs
 - Implement proper CORS settings
 
+### AI Integration
+- Keep API keys secure in environment variables
+- Implement proper error handling for AI failures
+- Test fallback systems thoroughly
+- Monitor API usage and costs
+
 ## Deployment
 
 ### Vercel (Recommended)
@@ -198,6 +265,17 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 Update your production environment variables and Supabase settings:
 - Site URL: `https://your-domain.com`
 - Redirect URLs: `https://your-domain.com/auth/callback`
+- Add `NEXT_PUBLIC_GEMINI_API_KEY` for AI functionality
+
+## Testing
+
+### Test Gemini Integration
+Visit `/test-gemini` in your app to verify the AI integration is working properly.
+
+### Manual Testing
+1. **With API key**: Send messages in chat to test AI responses
+2. **Without API key**: Remove env variable to test fallback system
+3. **Error handling**: Use invalid API key to test error scenarios
 
 ## Contributing
 

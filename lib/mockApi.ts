@@ -1,5 +1,6 @@
 // Mock API for simulating backend responses
 import { generateRandomAmount, generateRandomDate, formatCurrency } from './utils';
+import { sendMessageToGemini } from './gemini';
 
 // Generate realistic financial data based on user profile
 const generateFinancialProfile = () => {
@@ -107,7 +108,45 @@ export const mockApi = {
   },
 
   // Simulate chat message responses
-  sendChatMessage: async (message: string, userProfile: any) => {
+  sendChatMessage: async (message: string, userProfile: any, connectedAccounts: string[] = []) => {
+    try {
+      // Try to use the API route first
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message,
+          userProfile,
+          connectedAccounts,
+          messageHistory: [] // You can pass conversation history here if needed
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        return data;
+      }
+    } catch (error) {
+      console.error('API route error, trying Gemini directly:', error);
+    }
+
+    // Fallback to direct Gemini API if API route fails
+    try {
+      if (process.env.NEXT_PUBLIC_GEMINI_API_KEY) {
+        const response = await sendMessageToGemini(message, {
+          userProfile,
+          connectedAccounts: connectedAccounts.length > 0 ? connectedAccounts : ['Fi Money', 'Zerodha'],
+          messageHistory: []
+        });
+        return response;
+      }
+    } catch (error) {
+      console.error('Gemini API error, falling back to mock response:', error);
+    }
+
+    // Fallback to mock response if all else fails
     await new Promise(resolve => setTimeout(resolve, 1000));
     
     // Generate dynamic financial profile for responses
@@ -121,18 +160,19 @@ export const mockApi = {
     
     const responses = [
       {
-        message: `Hey! Looking at your financial data, I can see you're saving about ${savingsAmount} per month. That's fantastic! At this rate, by the time I'm ${userProfile.futureAge}, we'll have built a solid emergency fund of ${emergencyFund}. But here's what I'm thinking - what if we could optimize your spending patterns? If we adjust some expenses and invest an extra ${optimizedAmount} monthly in mutual funds, we could build an additional ${projectedGains} over the next 20 years! 🚀`,
+        message: `Oh man, I remember being exactly where you are right now! 😅 Looking at our data, you're saving about ${savingsAmount} per month - that's actually pretty solid, younger me! But here's what I wish I'd known: if we bump that up just a bit and invest smarter, we could build something really special. Trust me, future you will thank present you! 💪`,
         sender: 'future_self' as const,
         futureAge: userProfile.futureAge
       },
       {
-        message: `I've been analyzing your investment approach. You're doing well! However, diversifying your portfolio could potentially boost our returns. Based on your ${userProfile.personality} risk profile, I'd suggest optimizing our asset allocation. This could increase our portfolio value significantly by retirement! Want me to show you some specific recommendations tailored to your current financial situation?`,
+        message: `Haha, I can see you're still making some of the same mistakes I made! 😂 But hey, that's why I'm here - to save you from my regrets. Your investment approach isn't bad, but I learned the hard way that diversification is everything. Want me to show you what I wish I'd done differently?`,
         sender: 'future_self' as const,
         futureAge: userProfile.futureAge
       },
       {
-        message: `Based on your current financial data and goals, I've run some projections. Here's what I found: Your savings rate is excellent! If you maintain this, plus some strategic optimizations we can discuss, you'll be able to achieve your primary financial goals ahead of schedule. The key is consistency and making smart adjustments. Should I create a detailed action plan for you?`,
-        sender: 'ai_assistant' as const
+        message: `You know what? I'm actually proud of you for asking for help. That's something I wish I'd done more of at your age. Looking at your goals, you've got a solid foundation. Let's make sure you don't repeat my mistakes and actually achieve what we both want! 🎯`,
+        sender: 'future_self' as const,
+        futureAge: userProfile.futureAge
       }
     ];
     

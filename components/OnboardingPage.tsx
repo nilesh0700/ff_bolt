@@ -50,14 +50,14 @@ export default function OnboardingPage({ userProfile, onProfileUpdate, onComplet
                 <Slider
                   value={[userProfile.futureAge]}
                   onValueChange={(value) => onProfileUpdate({ futureAge: value[0] })}
-                  max={80}
+                  max={90}
                   min={userProfile.age + 5}
-                  step={5}
+                  step={1}
                   className="w-full"
                 />
                 <div className="flex justify-between text-sm font-semibold text-gray-700 mt-4">
                   <span>{userProfile.age + 5}</span>
-                  <span>80</span>
+                  <span>90</span>
                 </div>
               </div>
             </div>

@@ -35,7 +35,8 @@ export default function ChatPage() {
 
   const handleSendMessage = async (message: string, userProfile: any): Promise<ChatResponse> => {
     // Use mockApi for now, replace with real API later
-    return await mockApi.sendChatMessage(message, userProfile);
+    // Pass connected accounts to the API
+    return await mockApi.sendChatMessage(message, userProfile, auth.connectedAccounts);
   };
 
   // Create initial welcome message
