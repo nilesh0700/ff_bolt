@@ -48,31 +48,12 @@ This document tracks all the major changes and enhancements made to the project 
 - **Description**: Individual card components with custom logo sizing for visual balance
 - **Cards Created**:
   - **Fi Money Card**: 
-    - JPG image with `60x60px` with rounded corners
+    - SVG component with `w-20 h-20` (80x80px)
     - Green color scheme: `from-[#00A175] to-[#008a64]`
   - **Zerodha Card**:
     - PNG image with `72x56px` custom sizing  
     - Purple color scheme: `from-[#725BF4] to-[#5d47d9]`
 - **Visual Balance**: Logos now appear similar in visual weight despite different formats
-
-### 6. **Persistent Account Connection State**
-- **Status**: ✅ Complete
-- **Description**: Implemented persistent state management using Supabase database
-- **Features**:
-  - Account connections saved to `connected_accounts` table
-  - State persists across browser sessions and page navigation
-  - Real-time updates using React Query
-  - Toast notifications for user feedback
-  - Loading states and error handling
-- **APIs Created**:
-  - `GET /api/connected-accounts` - Fetch user's connected accounts
-  - `POST /api/connected-accounts` - Connect new account
-  - `PUT /api/connected-accounts` - Update account status
-- **Hooks Created**:
-  - `useConnectedAccounts()` - Fetch accounts with caching
-  - `useConnectAccount()` - Connect account mutation
-  - `useUpdateAccountStatus()` - Update account status
-  - `useConnectedAccountTypes()` - Helper for account types array
 
 ## 🔧 Technical Configuration
 
@@ -96,7 +77,7 @@ This document tracks all the major changes and enhancements made to the project 
 ### File Structure
 ```
 components/
-├── AccountConnection.tsx (✅ Individual cards with persistent state)
+├── AccountConnection.tsx (✅ Individual cards with custom sizing)
 ├── AuthPage.tsx (✅ Complete auth interface)
 ├── Navbar.tsx (✅ Auth-aware navigation)
 └── ui/ (✅ Shadcn UI components)
@@ -105,21 +86,13 @@ lib/
 ├── supabase-auth.tsx (✅ Auth context provider)
 ├── supabase.ts (✅ Supabase client config)
 ├── middleware.ts (✅ Route protection)
-├── react-query.tsx (✅ Query client setup)
-└── hooks/
-    └── useConnectedAccounts.ts (✅ Account state management)
-
-app/api/
-├── auth/callback/ (✅ Auth callback handling)
-├── profile/ (✅ User profile management)
-├── recommendations/ (✅ Financial recommendations)
-└── connected-accounts/ (✅ Account connection management)
+└── react-query.tsx (✅ Query client setup)
 
 types/
 └── svg.d.ts (✅ SVG component declarations)
 
 public/
-├── fi_logo.jpg (✅ Fi Money JPG logo)
+├── fi_logo.svg (✅ Fi Money SVG logo)
 ├── zerodha_logo.png (✅ Zerodha PNG logo)
 └── ff_logo.png (✅ App logo)
 ```

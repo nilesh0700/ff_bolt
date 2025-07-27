@@ -154,7 +154,7 @@ export default function AuthPage({ onBack }: AuthPageProps) {
                   )}
 
                   {/* Demo Login Banner */}
-                  {/* <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 text-center">
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 text-center">
                     <p className="text-yellow-800 text-sm mb-3 flex items-center justify-center">
                       <Sparkles className="w-4 h-4 mr-2" />
                       Try the demo:
@@ -167,16 +167,16 @@ export default function AuthPage({ onBack }: AuthPageProps) {
                       <Zap className="w-4 h-4 mr-2" />
                       Quick Demo Login
                     </Button>
-                  </div> */}
+                  </div>
 
-                  {/* <div className="relative">
+                  <div className="relative">
                     <div className="absolute inset-0 flex items-center">
                       <div className="w-full border-t border-gray-200" />
                     </div>
                     <div className="relative flex justify-center text-sm">
                       <span className="bg-white px-4 text-gray-500">or continue with</span>
                     </div>
-                  </div> */}
+                  </div>
 
                   {/* Google Auth */}
                   <Button 
