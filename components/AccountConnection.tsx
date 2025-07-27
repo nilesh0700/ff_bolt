@@ -6,6 +6,9 @@ import { Progress } from '@/components/ui/progress';
 import { CheckCircle, ArrowRight, Shield, Banknote, TrendingUp, Sparkles, Star, ArrowLeft } from 'lucide-react';
 import { useState } from 'react';
 import Navbar from '@/components/Navbar';
+import Image from 'next/image';
+import ZerodhaLogo from '@/public/zerodha_logo.png';
+import FiLogo from '@/public/fi_logo.jpg';
 
 interface AccountConnectionProps {
   connectedAccounts: string[];
@@ -31,28 +34,7 @@ export default function AccountConnection({
     setConnecting(null);
   };
 
-  const accounts = [
-    {
-      id: 'fi-money',
-      name: 'Fi Money',
-      description: 'Digital banking & smart savings',
-      icon: Banknote,
-      color: 'from-[#00A175] to-[#008a64]',
-      bgColor: 'from-[#00A175]/10 to-[#008a64]/10',
-      connected: connectedAccounts.includes('fi-money')
-    },
-    {
-      id: 'zerodha',
-      name: 'Zerodha',
-      description: 'Investment & trading platform',
-      icon: TrendingUp,
-      color: 'from-[#725BF4] to-[#5d47d9]',
-      bgColor: 'from-[#725BF4]/10 to-[#5d47d9]/10',
-      connected: connectedAccounts.includes('zerodha')
-    }
-  ];
-
-  const progress = (connectedAccounts.length / accounts.length) * 100;
+  const progress = (connectedAccounts.length / 2) * 100; // 2 accounts: Fi Money and Zerodha
 
   return (
     <div className="min-h-screen bg-white">
@@ -63,78 +45,125 @@ export default function AccountConnection({
         <div className="max-w-4xl mx-auto">
           {/* Header Section */}
           <div className="text-center mb-16">
-            <div className="inline-flex items-center bg-gray-50 rounded-full px-6 py-3 mb-8 border border-gray-200">
+            {/* <div className="inline-flex items-center bg-gray-50 rounded-full px-6 py-3 mb-8 border border-gray-200">
               <Star className="w-5 h-5 text-[#00A175] mr-2" />
               <span className="text-sm font-medium text-gray-700">Secure & Encrypted</span>
-            </div>
+            </div> */}
             
-            <h1 className="text-6xl md:text-7xl font-bold mb-8 leading-tight text-gray-900">
+            {/* <h1 className="text-2xl md:text-4xl font-bold mb-8 leading-tight text-gray-900">
               Connect Your
               <span className="block text-[#725BF4] mt-2">
                 Accounts
               </span>
             </h1>
             
-            <p className="text-xl text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-l text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
               Securely link your financial accounts to unlock personalized insights and build your future self
-            </p>
+            </p> */}
           </div>
 
           {/* Account Cards Grid */}
           <div className="grid gap-8 md:grid-cols-2 mb-12">
-            {accounts.map((account) => {
-              const IconComponent = account.icon;
-              const isConnecting = connecting === account.id;
-              
-              return (
-                <Card
-                  key={account.id}
-                  className={`card-modern transition-all duration-300 hover:scale-105 ${
-                    account.connected
-                      ? 'border-[#00A175] bg-gradient-to-br from-[#00A175]/5 to-[#008a64]/5'
-                      : 'hover:shadow-xl'
-                  }`}
-                >
-                  <CardContent className="p-8 text-center">
-                    <div className={`w-20 h-20 mx-auto mb-6 rounded-3xl bg-gradient-to-br ${account.color} flex items-center justify-center shadow-lg`}>
-                      <IconComponent className="w-10 h-10 text-white" />
-                    </div>
-                    <h3 className="text-2xl font-bold mb-4 text-gray-900">
-                      {account.name}
-                    </h3>
-                    <p className="text-gray-600 mb-8 leading-relaxed">
-                      {account.description}
-                    </p>
-                    
-                    {account.connected ? (
-                      <div className="flex items-center justify-center space-x-3 text-[#00A175] bg-[#00A175]/10 py-4 px-6 rounded-2xl border border-[#00A175]/20">
-                        <CheckCircle className="w-6 h-6" />
-                        <span className="font-semibold text-lg">Connected</span>
-                        <Star className="w-5 h-5 fill-current" />
+            {/* Fi Money Card - Custom sizing for visual balance */}
+            <Card
+              className={`card-modern transition-all duration-300 hover:scale-105 ${
+                connectedAccounts.includes('fi-money')
+                  ? 'border-[#00A175] bg-gradient-to-br from-[#00A175]/5 to-[#008a64]/5'
+                  : 'hover:shadow-xl'
+              }`}
+            >
+              <CardContent className="p-8 text-center">
+                <div className="w-16 h-16 mx-auto mb-6 flex items-center justify-center">
+                  <Image src={FiLogo} alt="Fi Money" width={160} height={160} className="object-contain" />
+                </div>
+                <h3 className="text-2xl font-bold mb-4 text-gray-900">
+                  Fi Money
+                </h3>
+                <p className="text-gray-600 mb-8 leading-relaxed">
+                  Digital banking & smart savings
+                </p>
+                
+                {connectedAccounts.includes('fi-money') ? (
+                  <div className="flex items-center justify-center space-x-3 text-[#00A175] bg-[#00A175]/10 py-4 px-6 rounded-2xl border border-[#00A175]/20">
+                    <CheckCircle className="w-6 h-6" />
+                    <span className="font-semibold text-lg">Connected</span>
+                    <Star className="w-5 h-5 fill-current" />
+                  </div>
+                ) : (
+                  <Button
+                    onClick={() => handleConnect('fi-money')}
+                    disabled={connecting === 'fi-money'}
+                    className="w-full h-14 bg-gradient-to-r from-[#00A175] to-[#008a64] hover:shadow-lg text-white border-0 rounded-2xl font-semibold text-lg transition-all duration-300 hover:scale-105"
+                  >
+                    {connecting === 'fi-money' ? (
+                      <div className="flex items-center space-x-3">
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        <span>Connecting...</span>
                       </div>
                     ) : (
-                      <Button
-                        onClick={() => handleConnect(account.id)}
-                        disabled={isConnecting}
-                        className={`w-full h-14 bg-gradient-to-r ${account.color} hover:shadow-lg text-white border-0 rounded-2xl font-semibold text-lg transition-all duration-300 hover:scale-105`}
-                      >
-                        {isConnecting ? (
-                          <div className="flex items-center space-x-3">
-                            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                            <span>Connecting...</span>
-                          </div>
-                        ) : (
-                          <div className="flex items-center space-x-2">
-                            <span>Connect {account.name}</span>
-                            <ArrowRight className="w-5 h-5" />
-                          </div>
-                        )}
-                      </Button>
+                      <div className="flex items-center space-x-2">
+                        <span>Connect Fi Money</span>
+                        <ArrowRight className="w-5 h-5" />
+                      </div>
                     )}
-                  </CardContent>
-                </Card>
-              );
-            })}
+                  </Button>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Zerodha Card - Custom sizing for visual balance */}
+            <Card
+              className={`card-modern transition-all duration-300 hover:scale-105 ${
+                connectedAccounts.includes('zerodha')
+                  ? 'border-[#00A175] bg-gradient-to-br from-[#00A175]/5 to-[#008a64]/5'
+                  : 'hover:shadow-xl'
+              }`}
+            >
+              <CardContent className="p-8 text-center">
+                <div className="w-20 h-20 mx-auto mb-6 flex items-center justify-center">
+                  <Image
+                    src={ZerodhaLogo}
+                    alt="Zerodha"
+                    width={72}
+                    height={56}
+                    className="object-contain"
+                    style={{ maxWidth: '72px', maxHeight: '56px' }}
+                  />
+                </div>
+                <h3 className="text-2xl font-bold mb-4 text-gray-900">
+                  Zerodha
+                </h3>
+                <p className="text-gray-600 mb-8 leading-relaxed">
+                  Investment & trading platform
+                </p>
+                
+                {connectedAccounts.includes('zerodha') ? (
+                  <div className="flex items-center justify-center space-x-3 text-[#00A175] bg-[#00A175]/10 py-4 px-6 rounded-2xl border border-[#00A175]/20">
+                    <CheckCircle className="w-6 h-6" />
+                    <span className="font-semibold text-lg">Connected</span>
+                    <Star className="w-5 h-5 fill-current" />
+                  </div>
+                ) : (
+                  <Button
+                    onClick={() => handleConnect('zerodha')}
+                    disabled={connecting === 'zerodha'}
+                    className="w-full h-14 bg-gradient-to-r from-[#725BF4] to-[#5d47d9] hover:shadow-lg text-white border-0 rounded-2xl font-semibold text-lg transition-all duration-300 hover:scale-105"
+                  >
+                    {connecting === 'zerodha' ? (
+                      <div className="flex items-center space-x-3">
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        <span>Connecting...</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center space-x-2">
+                        <span>Connect Zerodha</span>
+                        <ArrowRight className="w-5 h-5" />
+                      </div>
+                    )}
+                  </Button>
+                )}
+              </CardContent>
+            </Card>
           </div>
 
           {/* Progress Section */}
@@ -143,7 +172,7 @@ export default function AccountConnection({
               <div className="space-y-6">
                 <div className="flex items-center justify-between text-lg">
                   <span className="text-gray-700 font-medium">
-                    {connectedAccounts.length} of {accounts.length} accounts connected
+                    {connectedAccounts.length} of 2 accounts connected
                   </span>
                   {connectedAccounts.length > 0 && (
                     <div className="flex items-center space-x-2 text-[#00A175] bg-[#00A175]/10 px-4 py-2 rounded-full border border-[#00A175]/20">
@@ -184,7 +213,7 @@ export default function AccountConnection({
             <Button
               onClick={onContinue}
               disabled={connectedAccounts.length === 0}
-              className="bg-[#00A175] hover:bg-[#008a64] text-white font-semibold text-lg px-12 py-4 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-[#00A175] hover:bg-[#008a64] text-white font-semibold text-lg px-8 py-8 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <span>Continue to Avatar Setup</span>
               <ArrowRight className="w-6 h-6 ml-3" />

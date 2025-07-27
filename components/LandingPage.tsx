@@ -6,7 +6,7 @@ import { Sparkles, MessageCircle, TrendingUp, Shield, ArrowRight, Play, Star, Us
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Navbar from '@/components/Navbar';
-import { useAuth } from '@/lib/auth';
+import { useAuth } from '@/lib/supabase-auth';
 
 interface LandingPageProps {
   onGetStarted?: () => void;
@@ -15,23 +15,37 @@ interface LandingPageProps {
 
 export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps) {
   const router = useRouter();
-  const auth = useAuth();
+  const { user, loading } = useAuth();
   const [activeDemo, setActiveDemo] = useState(0);
   const [activeTech, setActiveTech] = useState(0);
 
   const handleGetStarted = () => {
-    if (onGetStarted) {
-      onGetStarted();
+    // Check if user is authenticated
+    if (user) {
+      // User is authenticated, redirect to next step in flow
+      router.push('/connect');
     } else {
-      router.push('/auth');
+      // User is not authenticated, go to auth page
+      if (onGetStarted) {
+        onGetStarted();
+      } else {
+        router.push('/auth');
+      }
     }
   };
 
   const handleLogin = () => {
-    if (onLogin) {
-      onLogin();
+    // Check if user is authenticated
+    if (user) {
+      // User is already authenticated, redirect to chat
+      router.push('/chat');
     } else {
-      router.push('/auth');
+      // User is not authenticated, go to auth page
+      if (onLogin) {
+        onLogin();
+      } else {
+        router.push('/auth');
+      }
     }
   };
 
@@ -92,6 +106,18 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
     }
   ];
 
+  // Show loading state while checking authentication
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-[#725BF4] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
@@ -117,10 +143,17 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
             <div className="flex justify-center items-center mb-16">
               <Button
                 onClick={handleGetStarted}
-                className="bg-[#00A175] hover:bg-[#008a64] text-white font-semibold text-lg px-6 py-6 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
+                disabled={loading}
+                className="bg-[#00A175] hover:bg-[#008a64] text-white font-semibold text-lg px-6 py-6 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50"
               >
-                Get Started
-                <ArrowRight className="w-5 h-5 ml-3" />
+                {loading ? (
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-3" />
+                ) : (
+                  <>
+                    {user ? 'Continue Journey' : 'Get Started'}
+                    <ArrowRight className="w-5 h-5 ml-3" />
+                  </>
+                )}
               </Button>
             </div>
           </div>
@@ -350,7 +383,7 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
                   <div className="space-y-2">
                     <div className="flex items-center space-x-2">
                       <div className="w-2 h-2 bg-[#00A175] rounded-full"></div>
-                                              <span className="text-xs text-gray-600">Increase SIP by ₹5K</span>
+                      <span className="text-xs text-gray-600">Increase SIP by ₹5K</span>
                     </div>
                     <div className="flex items-center space-x-2">
                       <div className="w-2 h-2 bg-[#725BF4] rounded-full"></div>
@@ -713,10 +746,17 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
                 <p className="text-gray-600 mb-4">Ready to have your own conversation?</p>
                 <Button
                   onClick={handleGetStarted}
-                  className="bg-[#00A175] hover:bg-[#008a64] text-white font-semibold px-8 py-3 rounded-xl transition-all duration-200"
+                  disabled={loading}
+                  className="bg-[#00A175] hover:bg-[#008a64] text-white font-semibold px-8 py-3 rounded-xl transition-all duration-200 disabled:opacity-50"
                 >
-                  Start Your Journey
-                  <ArrowRight className="w-5 h-5 ml-2" />
+                  {loading ? (
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mr-2" />
+                  ) : (
+                    <>
+                      {user ? 'Continue Journey' : 'Start Your Journey'}
+                      <ArrowRight className="w-5 h-5 ml-2" />
+                    </>
+                  )}
                 </Button>
               </div>
             </div>
@@ -772,12 +812,17 @@ export default function LandingPage({ onGetStarted, onLogin }: LandingPageProps)
                   <div className="pt-8">
                     <Button
                       onClick={handleGetStarted}
-                      className="group relative bg-gradient-to-r from-[#00A175] to-[#008a64] hover:from-[#008a64] hover:to-[#00A175] text-white font-bold text-xl px-12 py-6 rounded-2xl transition-all duration-300 shadow-2xl hover:shadow-[#00A175]/25 hover:scale-105 border-0"
+                      disabled={loading}
+                      className="group relative bg-gradient-to-r from-[#00A175] to-[#008a64] hover:from-[#008a64] hover:to-[#00A175] text-white font-bold text-xl px-12 py-6 rounded-2xl transition-all duration-300 shadow-2xl hover:shadow-[#00A175]/25 hover:scale-105 border-0 disabled:opacity-50"
                     >
                       <div className="flex items-center space-x-3">
-                        <Rocket className="w-6 h-6 group-hover:rotate-12 transition-transform duration-300" />
-                        <span>Start Your Journey</span>
-                        <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform duration-300" />
+                        {loading ? (
+                          <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        ) : (
+                          <Rocket className="w-6 h-6 group-hover:rotate-12 transition-transform duration-300" />
+                        )}
+                        <span>{user ? 'Continue Your Journey' : 'Start Your Journey'}</span>
+                        {!loading && <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform duration-300" />}
                       </div>
                       
                       {/* Glow Effect */}
